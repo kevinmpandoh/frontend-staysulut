@@ -44,7 +44,7 @@ const LoginForm = () => {
   const handleLoginWithGoogle = async () => {
     try {
       // await loginWithGoogle(role);
-      window.location.href = `http://localhost:8000/api/auth/${role}/google`;
+      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/${role}/google`;
     } catch (error) {
       console.log(error, "ERRORR");
     }

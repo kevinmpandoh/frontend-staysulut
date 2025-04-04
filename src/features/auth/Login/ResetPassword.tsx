@@ -35,7 +35,10 @@ const ResetPasswordForm = () => {
     mode: "onChange",
   });
   const onSubmit = async (data: any) => {
-    if (!token) return;
+    if (!token || !role) {
+      setError("password", { type: "manual", message: "Token tidak valid." });
+      return;
+    }
     setLoading(true);
     setMessage(null);
 

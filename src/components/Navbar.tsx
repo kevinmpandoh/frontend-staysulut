@@ -1,4 +1,3 @@
-import { useAuthStore } from "@/stores/auth.store";
 import Link from "next/link";
 import React from "react";
 
