@@ -1,31 +1,31 @@
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 
-import { useRouter } from "next/router";
-import { useAuth } from "@/hooks/useAuth";
+// import { useRouter } from "next/router";
+// import { useAuth } from "@/hooks/useAuth";
 
-interface Props {
-  children: React.ReactNode;
-}
+// interface Props {
+//   children: React.ReactNode;
+// }
 
-const AuthPage: React.FC<Props> = ({ children }) => {
-  const { isLoggedIn } = useAuth();
-  const router = useRouter();
+// const AuthPage: React.FC<Props> = ({ children }) => {
+//   const { isLoggedIn } = useAuth();
+//   const router = useRouter();
 
-  const [isLoading, setIsLoading] = useState(true);
+//   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.push("/");
-    } else {
-      setIsLoading(false);
-    }
-  }, [isLoggedIn, router]);
+//   useEffect(() => {
+//     if (isLoggedIn) {
+//       router.push("/");
+//     } else {
+//       setIsLoading(false);
+//     }
+//   }, [isLoggedIn, router]);
 
-  if (isLoading) {
-    return <h1>Sabar yaaa</h1>;
-  }
+//   if (isLoading) {
+//     return <h1>Sabar yaaa</h1>;
+//   }
 
-  return <>{children}</>;
-};
+//   return <>{children}</>;
+// };
 
-export default AuthPage;
+// export default AuthPage;

@@ -1,32 +1,32 @@
-"use clint";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/useAuth";
+// "use clint";
+// import React, { useEffect, useState } from "react";
+// import { useRouter } from "next/navigation";
+// import { useAuth } from "@/hooks/useAuth";
 
-interface Props {
-  children: React.ReactNode;
-}
+// interface Props {
+//   children: React.ReactNode;
+// }
 
-const ProtectedRoute: React.FC<Props> = ({ children }) => {
-  const { isLoggedIn } = useAuth();
-  const router = useRouter();
+// const ProtectedRoute: React.FC<Props> = ({ children }) => {
+//   const { isLoggedIn } = useAuth();
+//   const router = useRouter();
 
-  const [isLoading, setIsLoading] = useState(true);
+//   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const tes = await isLoggedIn();
-      console.log(tes, "TESS");
-    };
+//   useEffect(() => {
+//     const checkUser = async () => {
+//       const tes = await isLoggedIn();
+//       console.log(tes, "TESS");
+//     };
 
-    checkUser();
-  }, [isLoggedIn, router]);
+//     checkUser();
+//   }, [isLoggedIn, router]);
 
-  if (isLoading) {
-    return <h1>SABAR YA</h1>;
-  }
+//   if (isLoading) {
+//     return <h1>SABAR YA</h1>;
+//   }
 
-  return <>{children}</>;
-};
+//   return <>{children}</>;
+// };
 
-export default ProtectedRoute;
+// export default ProtectedRoute;
