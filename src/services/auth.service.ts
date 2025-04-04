@@ -9,14 +9,6 @@ type AuthResponse = {
   };
 };
 
-// interface Regsiter {
-//   name: string;
-//   email: string;
-//   phone: string;
-//   password: string;
-//   role: string;
-// }
-
 export const AuthService = {
   login: async (email: string, password: string, role: string) => {
     const response = await api.post<AuthResponse>(`/auth/${role}/login`, {
@@ -39,6 +31,15 @@ export const AuthService = {
         email: data.email,
         phone: data.phone,
         password: data.password,
+      }
+    );
+    return response.data;
+  },
+  forgotPassword: async (email: string, role: string) => {
+    const response = await api.post<AuthResponse>(
+      `/auth/${role}/forgot-password`,
+      {
+        email,
       }
     );
     return response.data;
@@ -78,6 +79,17 @@ export const AuthService = {
         error.response?.data?.message ||
           "Gagal mengirim ulang OTP. Silahkan coba lagi"
       );
+    }
+  },
+  async resetPassword(newPassword: string, token: string, role: string) {
+    try {
+      const response = await api.post(`/auth/${role}/reset-password`, {
+        password: newPassword,
+        token,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error;
     }
   },
 };

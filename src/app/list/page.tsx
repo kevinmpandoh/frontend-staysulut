@@ -1,9 +1,11 @@
+"use client";
+import ProtectedRoute from "@/components/HOC/ProtectedRoute";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <div>
+      <ProtectedRoute>
         <header className="bg-white shadow-sm">
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
             <div className="text-2xl font-bold text-blue-600">StaySulut</div>
@@ -149,7 +151,7 @@ const page = () => {
             </div>
           </div>
         </footer>
-      </div>
+      </ProtectedRoute>
     </div>
   );
 };

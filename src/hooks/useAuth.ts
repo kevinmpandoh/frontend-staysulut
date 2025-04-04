@@ -10,7 +10,6 @@ export function useAuth() {
   const login = async (email: string, password: string, role: string) => {
     try {
       const user = await AuthService.login(email, password, role);
-      console.log(user, "USERR");
       setUser(user.data);
       if (role === "owner") {
         router.push("/dashboard");
@@ -29,7 +28,6 @@ export function useAuth() {
   const loginWithGoogle = async (role: string) => {
     try {
       const user = await AuthService.loginWithGoogle(role);
-      console.log(user, "USERR");
       setUser(user.data);
       if (role === "owner") {
         router.push("/dashboard");
@@ -58,6 +56,28 @@ export function useAuth() {
       throw new Error("Terjadi kesalahan, silakan coba lagi.");
     }
   };
+  const forgotPassword = async (email: string, role: string) => {
+    try {
+      return await AuthService.forgotPassword(email, role);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
+        throw err;
+      }
+      throw new Error("Terjadi kesalahan, silakan coba lagi.");
+    }
+  };
+  const resetPassword = async (email: string, token: string, role: string) => {
+    try {
+      return await AuthService.resetPassword(email, token, role);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
+        throw err;
+      }
+      throw new Error("Terjadi kesalahan, silakan coba lagi.");
+    }
+  };
 
   const logout = async () => {
     try {
@@ -71,6 +91,26 @@ export function useAuth() {
       throw new Error("Terjadi kesalahan, silakan coba lagi.");
     }
   };
+  const isLoggedIn = async () => {
+    try {
+      const user = await AuthService.getUser();
+      console.log(user, "USERR");
+      return user;
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        throw new Error(err.response?.data?.message || "Logout gagal");
+      }
+      throw new Error("Terjadi kesalahan, silakan coba lagi.");
+    }
+  };
 
-  return { login, register, logout, loginWithGoogle };
+  return {
+    login,
+    register,
+    logout,
+    loginWithGoogle,
+    forgotPassword,
+    resetPassword,
+    isLoggedIn,
+  };
 }

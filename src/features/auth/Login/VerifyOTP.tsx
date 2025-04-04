@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const page = () => {
+const VerifyOTPLogin = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="bg-white rounded-lg ring-2 h-[500px] ring-gray-100  shadow-lg flex flex-col md:flex-row items-center md:items-start w-full max-w-5xl mx-auto">
@@ -72,4 +72,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default VerifyOTPLogin;
