@@ -81,20 +81,17 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await AuthService.logout();
-      setUser(null);
-      router.push("/auth");
+      await AuthService.logout(); // kalau tidak ada endpoint logout, bisa dihapus
     } catch (err) {
-      if (err instanceof AxiosError) {
-        throw new Error(err.response?.data?.message || "Logout gagal");
-      }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
+      console.error("Logout error:", err);
+    } finally {
+      setUser(null);
+      window.location.reload(); // reload page setelah logout
     }
   };
   const isLoggedIn = async () => {
     try {
       const user = await AuthService.getUser();
-      console.log(user, "USERR");
       return user;
     } catch (err) {
       if (err instanceof AxiosError) {

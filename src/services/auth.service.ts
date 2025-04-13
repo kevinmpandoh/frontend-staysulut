@@ -19,7 +19,6 @@ export const AuthService = {
   },
   loginWithGoogle: async (role: string) => {
     const response = await api.get(`/auth/${role}/google`);
-    console.log(response, "RESS");
     return response.data;
   },
 

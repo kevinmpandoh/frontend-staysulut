@@ -15,7 +15,6 @@ export function useOTP(email: string, role: "tenant" | "owner") {
       setError("");
 
       try {
-        console.log(otp, "OTPP");
         const user = await AuthService.verifyOTP(email, otp, role);
         setUser(user); // Simpan user di store
         if (role === "owner") {
