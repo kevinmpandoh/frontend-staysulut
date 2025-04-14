@@ -16,18 +16,21 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { useAuthContext } from "@/contexts/AuthContext";
+// import { useAuthContext } from "@/contexts/AuthContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useAuthStore } from "@/stores/auth.store";
 // import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
-  const { user } = useAuthContext();
+  // const { user } = useAuthContext();
+  // const [user, setUser] = useState<any>(null);
   const { logout } = useAuth();
   const pathname = usePathname();
   const [showSearch, setShowSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  console.log(user, "USER NAVBAR");
+  const user = useAuthStore((state) => state.user);
+  const isHydrated = useAuthStore((state) => state.isHydrated);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,7 +93,9 @@ const Navbar = () => {
 
           {/* Right actions */}
           <div className="hidden sm:flex items-center gap-2">
-            {user ? (
+            {!isHydrated ? ( // <Skeleton className="h-10 w-20 rounded-md" />
+              <div className="h-10 w-20 rounded-md bg-gray-200 animate-pulse"></div>
+            ) : user ? (
               <>
                 <div className="flex space-x-4 mr-4">
                   <MessageCircle

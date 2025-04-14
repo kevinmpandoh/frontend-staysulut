@@ -1,31 +1,38 @@
+// contexts/AuthContext.tsx
 "use client";
-import { createContext, useContext } from "react";
-import type { ReactNode } from "react";
 
-type User = {
-  id: string;
-  email: string;
-  name: string;
-};
+import { ReactNode, useEffect } from "react";
 
-type AuthContextType = {
-  user: User | null;
-};
-
-export const AuthContext = createContext<AuthContextType>({
-  user: null,
-});
-
-export const useAuthContext = () => useContext(AuthContext);
+import { useAuthStore } from "@/stores/auth.store";
+import { AuthService } from "@/services/auth.service";
 
 export const AuthProvider = ({
-  user,
   children,
+  user: userFromServer,
 }: {
-  user: User | null;
   children: ReactNode;
+  user: any; // sesuai format dari backend
 }) => {
-  return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
-  );
+  const { setUser, logout, setHydrated } = useAuthStore();
+
+  useEffect(() => {
+    if (userFromServer) {
+      setUser(userFromServer);
+    } else {
+      const fetchUser = async () => {
+        try {
+          const user = await AuthService.getUser();
+          setUser(user?.data);
+        } catch (err) {
+          console.log("Error fetching user:", err);
+          logout();
+        } finally {
+          setHydrated(true); // Penting: pastikan flag tetap diset
+        }
+      };
+      fetchUser();
+    }
+  }, [userFromServer, setUser, logout, setHydrated]);
+
+  return <>{children}</>;
 };

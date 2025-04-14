@@ -6,6 +6,8 @@ export async function getUserFromServer() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
+    console.log(token, "TOKENNYA");
+
     if (!token) return null;
 
     const res = await api.get(`/auth/me`, {

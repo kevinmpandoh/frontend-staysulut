@@ -86,18 +86,21 @@ export function useAuth() {
       console.error("Logout error:", err);
     } finally {
       setUser(null);
-      window.location.reload(); // reload page setelah logout
+      router.push("/"); // reload page setelah logout
     }
   };
   const isLoggedIn = async () => {
     try {
       const user = await AuthService.getUser();
+      setUser(user?.data);
+
       return user;
     } catch (err) {
       if (err instanceof AxiosError) {
-        throw new Error(err.response?.data?.message || "Logout gagal");
+        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
+        throw err;
       }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
+      logout(); // auto logout kalau token invalid
     }
   };
 
