@@ -6,11 +6,12 @@ export async function getUserFromServer() {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
+    if (!token) return null;
+
     const res = await api.get(`/auth/me`, {
       headers: {
         Cookie: `token=${token}`,
       },
-      withCredentials: true,
     });
 
     console.log(res.data, "RESPONSE DATA");
