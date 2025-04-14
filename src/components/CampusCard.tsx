@@ -15,15 +15,18 @@ const CampusCard = ({ name, logo, slug }: CampusCardProps) => {
       href={`/kosts?campus=${slug}`}
       className="bg-white rounded-xl shadow hover:shadow-md transition-shadow flex flex-col items-center justify-center p-4"
     >
-      <div className="relative w-20 h-20 mb-3">
+      <div className="relative w-20 h-28 mb-3">
         <Image
           src={logo}
           alt={`Logo ${name}`}
-          layout="fill"
-          objectFit="contain"
+          width={300}
+          height={300}
+          className="object-contain"
+          // layout="fill"
+          // objectFit="contain"
         />
       </div>
-      <p className="text-center font-medium text-sm md:text-base">{name}</p>
+      <p className="text-center font-medium text-sm md:text-lg">{name}</p>
     </Link>
   );
 };

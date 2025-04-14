@@ -13,10 +13,13 @@ export async function getUserFromServer() {
       withCredentials: true,
     });
 
+    console.log(res.data, "RESPONSE DATA");
+
     // const res = await api.post("/auth/logout");
 
     return res.data;
-  } catch {
+  } catch (error) {
+    console.log(error, "ERROR DATA");
     return null;
   }
 }

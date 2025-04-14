@@ -11,6 +11,8 @@ export default async function KostLayout({
 }) {
   const user = await getUserFromServer();
 
+  console.log("user layout", user);
+
   return (
     <AuthProvider user={user?.data}>
       <main>

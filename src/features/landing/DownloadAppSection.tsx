@@ -8,7 +8,7 @@ const DownloadAppSection = () => {
         {/* Gambar HP / Ilustrasi */}
         <div className="flex justify-center md:justify-start">
           <Image
-            src="/mockup-app.png" // Ganti dengan screenshot atau ilustrasi app kamu
+            src="/images/screenshot/dashboard-overview.png" // Ganti dengan screenshot atau ilustrasi app kamu
             alt="Aplikasi Kostku"
             width={400}
             height={600}
@@ -26,7 +26,7 @@ const DownloadAppSection = () => {
             dari smartphone kamu. Fitur lengkap dalam genggaman!
           </p>
 
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-4">
             {/* Tombol Google Play */}
             <Link
               href="#"

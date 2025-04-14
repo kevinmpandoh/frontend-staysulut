@@ -27,6 +27,8 @@ const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  console.log(user, "USER NAVBAR");
+
   useEffect(() => {
     const handleScroll = () => {
       const heroSection = document.getElementById("hero");

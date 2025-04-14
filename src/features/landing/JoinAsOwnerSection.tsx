@@ -2,9 +2,15 @@
 
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import { Users, ShieldCheck, BarChart2 } from "lucide-react";
+import {
+  Users,
+  ShieldCheck,
+  BarChart2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
@@ -25,9 +31,9 @@ const benefits = [
 
 const screenshots = [
   "/images/screenshot/dashboard-overview.png",
-  "/images/dashboard-kamar.png",
-  "/images/dashboard-pembayaran.png",
-  "/images/dashboard-chat.png",
+  "/images/screenshot/dashboard-overview.png",
+  "/images/screenshot/dashboard-overview.png",
+  "/images/screenshot/dashboard-overview.png",
 ];
 
 const JoinAsOwnerSection = () => {
@@ -41,22 +47,20 @@ const JoinAsOwnerSection = () => {
     created(slider) {
       setCurrentSlide(slider.track.details.rel);
     },
-    defaultAnimation: {
-      duration: 1000,
-      easing: (t) => t,
-    },
-    // animation: {
-    //   duration: 1000,
-    // },
-    // autoplay: {
-    //   delay: 3000,
-    //   pauseOnMouseEnter: true,
-    // },
   });
 
+  // Auto-play setiap 3 detik
+  useEffect(() => {
+    const interval = setInterval(() => {
+      instanceRef.current?.next();
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [instanceRef]);
+
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+    <section className="bg-white py-12 px-4 md:px-16 lg:px-36">
+      <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+        {/* LEFT */}
         <div>
           <h2 className="text-3xl font-bold mb-4">
             Punya Kost? Gabung dan Pasarkan Sekarang!
@@ -77,34 +81,47 @@ const JoinAsOwnerSection = () => {
             ))}
           </ul>
           <Button size={"xl"} asChild>
-            <Link
-              href="/daftar-pemilik"
-              // className="inline-block bg-primary hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition"
-            >
-              Daftarkan Kost Sekarang
-            </Link>
+            <Link href="/daftar-pemilik">Daftarkan Kost Sekarang</Link>
           </Button>
         </div>
 
-        <div className="relative">
+        {/* RIGHT */}
+        <div className="relative w-full">
+          {/* Slider */}
           <div
             ref={sliderRef}
-            className="keen-slider rounded-xl overflow-hidden shadow-lg"
+            className="keen-slider w-full rounded-xl overflow-hidden shadow-lg"
           >
             {screenshots.map((src, i) => (
-              <div key={i} className="keen-slider__slide">
+              <div key={i} className="keen-slider__slide w-full">
                 <Image
                   src={src}
                   alt={`Screenshot ${i + 1}`}
                   width={600}
                   height={400}
-                  className="object-cover w-full h-auto rounded-xl"
+                  className="object-cover rounded-xl"
                 />
               </div>
             ))}
           </div>
 
-          {/* Dot Indicators */}
+          {/* Panah Navigasi */}
+          <div className="hidden md:flex justify-between absolute top-1/2 -translate-y-1/2 w-full px-4 z-10">
+            <button
+              onClick={() => instanceRef.current?.prev()}
+              className="bg-white shadow p-2 rounded-full hover:bg-gray-100"
+            >
+              <ChevronLeft className="w-6 h-6 text-gray-600" />
+            </button>
+            <button
+              onClick={() => instanceRef.current?.next()}
+              className="bg-white shadow p-2 rounded-full hover:bg-gray-100"
+            >
+              <ChevronRight className="w-6 h-6 text-gray-600" />
+            </button>
+          </div>
+
+          {/* Bullet Indicators */}
           <div className="flex justify-center mt-4 space-x-2">
             {screenshots.map((_, i) => (
               <button
