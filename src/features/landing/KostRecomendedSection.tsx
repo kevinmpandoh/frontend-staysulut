@@ -5,6 +5,8 @@ import KostCard from "../../components/CardListKost";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useKostRecomended } from "@/hooks/useKostQuery";
+import KostCardSkeleton from "@/components/Skeleton/CardListKostSkeleton";
 
 const KostRecomendedSection = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -20,7 +22,36 @@ const KostRecomendedSection = () => {
     });
   };
 
-  const kostData = [...Array(10)]; // nanti ganti dengan data asli dari props/fetch
+  const {
+    data: kostRecomended,
+    isLoading,
+    isError,
+    refetch,
+  } = useKostRecomended();
+
+  if (isLoading) {
+    return (
+      <div className="grid px-36 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-8">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <KostCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      //  Perbaikan error state dan tombol refetch
+      <div className="mt-6 h-[300px] flex justify-center items-center">
+        <div className="flex flex-col items-center">
+          <p className="text-gray-500 mb-2">Gagal memuat data kost.</p>
+          <Button variant="outline" onClick={() => refetch()}>
+            Coba Lagi
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section className="container bg-white mx-auto px-6 md:px-18 lg:px-36 py-16">
@@ -34,13 +65,13 @@ const KostRecomendedSection = () => {
         {/* Tombol navigasi di desktop */}
         <button
           onClick={() => scroll("left")}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+          className="hidden md:flex absolute right-15 -top-10 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100"
         >
           <ChevronLeft />
         </button>
         <button
           onClick={() => scroll("right")}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+          className="hidden md:flex absolute right-0 -top-10 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow hover:bg-gray-100"
         >
           <ChevronRight />
         </button>
@@ -48,16 +79,17 @@ const KostRecomendedSection = () => {
         {/* Scrollable container */}
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto md:overflow-x-hidden scroll-smooth no-scrollbar"
+          className="flex gap-2 overflow-x-auto md:overflow-x-hidden scroll-smooth no-scrollbar"
         >
-          {kostData.map((_, i) => (
-            <div key={i} className="min-w-[280px]  md:flex-1">
+          {kostRecomended?.data.map((kost: any) => (
+            <div key={kost.id} className="min-w-[243px] md:flex-1">
               <KostCard
-                title="Kost Vinshi"
-                location="Remboken, Minahasa"
-                type="Campur"
-                price={120000}
-                images={["/kost.jpg", "/kost2.png"]}
+                id="1"
+                title={kost.nama_kost}
+                location={kost.alamat}
+                type={kost.jenis_kost}
+                price={kost.price}
+                images={kost.photos}
                 facilities={["wifi", "dapur", "parkiran"]}
               />
             </div>

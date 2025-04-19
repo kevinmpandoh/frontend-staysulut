@@ -14,6 +14,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 interface KostCardProps {
+  id: string;
   title: string;
   location: string;
   type: string;
@@ -30,6 +31,7 @@ const FACILITY_ICONS: Record<string, { label: string; icon: LucideIcon }> = {
 };
 
 const KostCard = ({
+  id,
   title,
   location,
   type,
@@ -52,7 +54,7 @@ const KostCard = ({
   };
 
   return (
-    <div className="relative bg-white rounded-2xl border overflow-hidden max-w-xs group">
+    <div className="relative bg-white rounded-2xl border overflow-hidden max-w-[260px] group">
       <div className="relative w-full h-48 overflow-hidden">
         {/* Image Slider */}
         <div
@@ -110,7 +112,7 @@ const KostCard = ({
       </div>
 
       {/* Info Kost */}
-      <Link href={`/kosts/${title.replace(/\s+/g, "-").toLowerCase()}`}>
+      <Link href={`/kosts/${id}`}>
         <div className="p-4 min-h-[230px]  flex flex-col justify-between ">
           <div>
             <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded mb-2">

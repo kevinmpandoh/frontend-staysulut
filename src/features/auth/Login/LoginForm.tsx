@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "motion/react";
 import { useForm } from "react-hook-form";
@@ -10,10 +11,32 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@/hooks/useAuth";
 import { AxiosError } from "axios";
 import { authValidation } from "@/validation/auth.validation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
   const [role, setRole] = useState<"tenant" | "owner">("tenant");
   const [showPassword, setShowPassword] = useState(false);
+  const [flashMessage, setFlashMessage] = useState<string | null>(null);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+    if (error) {
+      setFlashMessage(error);
+
+      // Hapus query dari URL setelah 3 detik
+      const timeout = setTimeout(() => {
+        setFlashMessage(null);
+        const url = new URL(window.location.href);
+        url.searchParams.delete("error");
+        router.replace(url.pathname); // replace tanpa reload
+      }, 3000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams, router]);
 
   const { login } = useAuth();
 
@@ -52,30 +75,32 @@ const LoginForm = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-white rounded-lg ring-2 ring-gray-100 shadow-lg flex max-w-5xl w-full">
+      <div className="flex items-center justify-center min-h-screen px-4">
+        <div className="bg-white sm:shadow-lg sm:ring-2 sm:ring-gray-100 flex flex-col md:flex-row w-full max-w-5xl rounded-none md:rounded-lg">
           {/* ====== BAGIAN KIRI (ANIMASI) ====== */}
           <motion.div
             key={role}
             initial={{ opacity: 0.5, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className={`${
+            className={`hidden md:flex ${
               role === "tenant" ? "bg-primary" : "bg-yellow-500"
-            } text-white p-10 rounded-l-lg rounded-r-[200px] flex flex-col items-center justify-center w-1/2`}
+            } text-white p-10 rounded-l-lg rounded-r-[150px] lg:rounded-r-[200px] flex flex-col items-center justify-center w-1/2`}
           >
-            <h2 className="text-2xl font-semibold mb-4">Selamat Datang</h2>
+            <h2 className="text-xl lg:text-2xl font-semibold mb-4">
+              Selamat Datang
+            </h2>
             <Image
               src="/Login-amico.svg"
               alt="Illustration of a person holding a key in front of a computer screen"
-              className="w-64 h-64"
+              className="w-40 h-auto lg:w-64 lg:h-64"
               width={300}
               height={300}
             />
           </motion.div>
 
           {/* ====== BAGIAN KANAN (FORM) ====== */}
-          <div className="p-10 w-1/2 mx-10">
+          <div className="p-6 md:p-10 w-full md:w-1/2">
             <h2 className="text-2xl text-center font-semibold mb-6">Login</h2>
 
             {/* ✅ Tab Role Penyewa / Pemilik */}
@@ -113,6 +138,12 @@ const LoginForm = () => {
                 </button>
               </div>
             </div>
+
+            {flashMessage && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {decodeURIComponent(flashMessage)}
+              </div>
+            )}
             {/* ✅ Form Login */}
             <form onSubmit={handleSubmit(onSubmit)} className="mb-4">
               <div className="mb-4">
@@ -211,7 +242,7 @@ const LoginForm = () => {
             <div className="text-center mt-4">
               <span className="text-gray-500">
                 Belum punya akun?{" "}
-                <Link href="/auth/register" className="text-primary">
+                <Link href="/auth/register/tenant" className="text-primary">
                   Daftar Sekarang
                 </Link>
               </span>

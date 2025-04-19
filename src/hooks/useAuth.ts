@@ -56,6 +56,19 @@ export function useAuth() {
       throw new Error("Terjadi kesalahan, silakan coba lagi.");
     }
   };
+  const registerTenant = async (data: any) => {
+    try {
+      await AuthService.register(data);
+
+      router.push("/auth/register/verify");
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
+        throw err;
+      }
+      throw new Error("Terjadi kesalahan, silakan coba lagi.");
+    }
+  };
   const forgotPassword = async (email: string, role: string) => {
     try {
       return await AuthService.forgotPassword(email, role);
@@ -107,6 +120,7 @@ export function useAuth() {
   return {
     login,
     register,
+    registerTenant,
     logout,
     loginWithGoogle,
     forgotPassword,

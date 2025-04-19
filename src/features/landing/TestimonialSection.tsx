@@ -44,8 +44,23 @@ const chunkArray = (arr: any[], size: number) => {
 };
 
 const TestimonialSection = () => {
-  const grouped = chunkArray(testimonials, 3);
   const [index, setIndex] = useState(0);
+  const [chunkSize, setChunkSize] = useState(3); // default desktop
+  const [grouped, setGrouped] = useState(chunkArray(testimonials, chunkSize));
+
+  useEffect(() => {
+    const updateChunkSize = () => {
+      if (window.innerWidth < 640) {
+        setChunkSize(1); // mobile
+      } else {
+        setChunkSize(3); // tablet & desktop
+      }
+    };
+
+    updateChunkSize();
+    window.addEventListener("resize", updateChunkSize);
+    return () => window.removeEventListener("resize", updateChunkSize);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,6 +69,11 @@ const TestimonialSection = () => {
     return () => clearInterval(interval);
   }, [grouped.length]);
 
+  useEffect(() => {
+    setGrouped(chunkArray(testimonials, chunkSize));
+    setIndex(0); // reset ke awal saat ukuran berubah
+  }, [chunkSize]);
+
   return (
     <section className="bg-white py-12 px-4 md:px-16 lg:px-36">
       <div className="max-w-6xl mx-auto px-4 text-center">
@@ -61,15 +81,15 @@ const TestimonialSection = () => {
           Apa Kata Penyewa?
         </h2>
 
-        <div className="relative min-h-[580px] sm:min-h-[380px] md:min-h-[220px]">
+        <div className="relative min-h-[280px] sm:min-h-[300px] md:min-h-[350px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 absolute w-full"
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4 }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
             >
               {grouped[index].map((t, i) => (
                 <div
@@ -101,7 +121,7 @@ const TestimonialSection = () => {
             <button
               key={i}
               onClick={() => setIndex(i)}
-              className={`w-2.5 h-2.5 rounded-full ${
+              className={`w-2 h-2 rounded-full ${
                 i === index ? "bg-primary" : "bg-gray-300"
               }`}
             />

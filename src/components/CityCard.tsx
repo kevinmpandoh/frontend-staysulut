@@ -12,7 +12,7 @@ interface CityCardProps {
 const CityCard = ({ name, image, slug }: CityCardProps) => {
   return (
     <Link
-      href={`/kosts?city=${slug}`}
+      href={`/kosts?search=${slug}`}
       className="group relative w-full h-56 md:h-64 rounded-2xl overflow-hidden shadow-lg"
     >
       <Image

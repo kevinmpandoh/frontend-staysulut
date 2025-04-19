@@ -12,10 +12,10 @@ interface CampusCardProps {
 const CampusCard = ({ name, logo, slug }: CampusCardProps) => {
   return (
     <Link
-      href={`/kosts?campus=${slug}`}
+      href={`/kosts?search=${slug}`}
       className="bg-white rounded-xl shadow hover:shadow-md transition-shadow flex flex-col items-center justify-center p-4"
     >
-      <div className="relative w-20 h-28 mb-3">
+      <div className="relative w-20 h-20 mb-3">
         <Image
           src={logo}
           alt={`Logo ${name}`}

@@ -2,19 +2,13 @@
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/utils/format";
 
 interface Props {
   min: string;
   max: string;
   onChange: (key: "min" | "max", value: string) => void;
 }
-
-// Helper untuk format angka ke IDR
-const formatCurrency = (value: string | number) => {
-  const number = typeof value === "string" ? parseInt(value) : value;
-  if (isNaN(number)) return "";
-  return number.toLocaleString("id-ID");
-};
 
 // Parse angka dari string dengan titik
 const parseCurrency = (formatted: string) => {
@@ -58,7 +52,7 @@ export default function PriceFilter({ min, max, onChange }: Props) {
                 const raw = parseCurrency(e.target.value);
                 onChange(key as "min" | "max", raw);
               }}
-              className="pl-12 py-6 text-5xl font-semibold"
+              className="pl-12 py-6 text-md font-semibold"
               placeholder={key === "min" ? "Minimal" : "Maksimal"}
             />
           </div>

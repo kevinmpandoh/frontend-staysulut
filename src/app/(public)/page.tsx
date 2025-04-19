@@ -29,6 +29,7 @@ export default function Home() {
         <AnimateSection id="hero">
           <HeroSection />
         </AnimateSection>
+
         <AnimateSection id="recomended">
           <KostRecomendedSection />
         </AnimateSection>

@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
-import { useKostList } from "@/hooks/kost/useKostList";
+
 import KostCard from "@/components/CardListKost";
 import KostCardSkeleton from "@/components/Skeleton/CardListKostSkeleton";
 import EmptyState from "@/components/Empty/EmptyState";
 import ErrorState from "@/components/Error/ErrorState";
 import KostPagination from "@/components/KostPagination";
+import { useKostList } from "@/hooks/useKostQuery";
 
 const KostList = () => {
   const { data, isLoading, isError } = useKostList();
@@ -41,11 +42,12 @@ const KostList = () => {
         {data?.data?.map((kost: any) => (
           <KostCard
             key={kost.id}
+            id={kost.id}
             title={kost.nama_kost}
             location={kost.alamat}
             type={kost.jenis_kost}
-            price={kost.harga_perbulan}
-            images={kost.foto}
+            price={kost.price}
+            images={kost.photos}
             facilities={kost.fasilitas}
           />
         ))}

@@ -7,7 +7,7 @@ import KostCard from "@/components/CardListKost";
 import { Funnel, ListFilter } from "lucide-react";
 
 const dummyKosts = [...Array(9)].map((_, i) => ({
-  id: i,
+  id: i.toString(),
   title: `Kost Vinshi ${i + 1}`,
   location: "Remboken, Minahasa",
   type: "Campur",

@@ -23,15 +23,12 @@ export const AuthService = {
   },
 
   register: async (data: any) => {
-    const response = await api.post<AuthResponse>(
-      `/auth/${data.role}/register`,
-      {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        password: data.password,
-      }
-    );
+    const response = await api.post<AuthResponse>(`/auth/tenant/register`, {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+    });
     return response.data;
   },
   forgotPassword: async (email: string, role: string) => {
