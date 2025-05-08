@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Modal from "@/components/common/Modal";
-import { Calendar } from "@/components/ui/calendar";
+// import { Calendar } from "@/components/ui/calendar";
 
 export default function TanggalMasukModal({
   isOpen,
@@ -36,14 +36,22 @@ export default function TanggalMasukModal({
         onSelect={setSelectedDate}
         fromDate={new Date()} // Tidak bisa pilih tanggal sebelum hari ini
       /> */}
-        <Calendar
+        {/* <Calendar
           mode="single"
           selected={selectedDate}
           onSelect={setSelectedDate}
           className="rounded-md border"
           disabled={{ before: new Date() }}
           required
-        />
+        /> */}
+        <div className="flex justify-center items-center mt-4">
+          <input
+            type="date"
+            value={selectedDate?.toISOString().split("T")[0]}
+            onChange={(e) => setSelectedDate(new Date(e.target.value))}
+            className="border rounded-md p-2 w-full"
+          />
+        </div>
         <button
           onClick={handleSave}
           className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
