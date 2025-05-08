@@ -7,7 +7,7 @@ import { Suspense } from "react";
 
 export default function KostListPage() {
   return (
-    <div className="p-4 max-w-6xl mx-auto mt-30">
+    <div className="p-4 max-w-6xl mx-auto my-10">
       <Suspense>
         <KostListHeader />
         <KostFilterTags />

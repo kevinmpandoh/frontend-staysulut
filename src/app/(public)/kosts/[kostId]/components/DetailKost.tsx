@@ -16,6 +16,8 @@ import KostDetailSkeleton from "./KostDetailSkeleton";
 import KostError from "./KostError";
 import { useRouter } from "next/navigation";
 import { useKostDetail } from "@/hooks/useKostQuery";
+import { useAuthStore } from "@/stores/auth.store";
+import { useLoginModal } from "@/stores/loginModal.store";
 
 interface DetailKostProps {
   kostId: string;
@@ -25,6 +27,8 @@ const DetailKost = ({ kostId }: DetailKostProps) => {
   const { data: kost, isLoading, isError } = useKostDetail(kostId);
   const router = useRouter();
 
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn());
+
   if (isLoading) return <KostDetailSkeleton />;
 
   if (isError || !kost)
@@ -33,20 +37,23 @@ const DetailKost = ({ kostId }: DetailKostProps) => {
     );
 
   const handleBookingCLick = () => {
-    // Handle booking click here
-    console.log("Booking clicked!");
+    if (!isLoggedIn) {
+      useLoginModal.getState().open();
+      return;
+    }
     router.push(`/kosts/${kostId}/booking`);
   };
 
   return (
     <>
-      <div className="max-w-6xl mx-auto px-4 py-6 my-20">
+      <div className="max-w-6xl mx-auto px-4 py-6">
         <KostImageGallery photos={kost?.photos} />
 
         <div className="grid grid-cols-1 lg:grid-cols-9 gap-20 mt-8">
           <div className="lg:col-span-6 space-y-6  ">
             <KostInfo
-              nama={`${kost.nama_kost} ${kost.nama_tipe}`}
+              id={kost.id}
+              nama={`${kost.nama_kost}`}
               jenis={kost.jenis_kost}
               alamat={`${kost.alamat.kecamatan}, ${kost.alamat.kabupaten_kota}`}
               rating={4.7}

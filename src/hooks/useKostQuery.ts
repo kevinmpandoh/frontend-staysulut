@@ -1,5 +1,5 @@
 import { KostService } from "@/services/kost.service";
-import { PreferenceService } from "@/services/preference.service";
+import { preferenceService } from "@/services/preference.service";
 import { useAuthStore } from "@/stores/auth.store";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
@@ -30,7 +30,7 @@ export const useKostRecomended = () => {
       }
 
       // Sudah login → cek preferensi
-      const preferences = await PreferenceService.getPreference();
+      const preferences = await preferenceService.getPreference();
       if (preferences) {
         return KostService.getKostRecomended(); // Ada preferensi → rekomendasi
       } else {

@@ -20,7 +20,7 @@ export default function RekomendasiKostPage() {
   const [kostList] = useState(dummyKosts);
 
   return (
-    <main className="container mx-auto px-6 md:px-16 lg:px-36 py-12 space-y-10 mt-30">
+    <main className="container mx-auto px-6 md:px-16 lg:px-36 py-12 space-y-10">
       {/* Header */}
       <section className="text-center space-y-2">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800">

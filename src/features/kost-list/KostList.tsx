@@ -12,7 +12,7 @@ const KostList = () => {
   const { data, isLoading, isError } = useKostList();
   if (isLoading) {
     return (
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+      <div className="grid md:grid-cols-2 0 lg:grid-cols-4 gap-4 mt-8">
         {Array.from({ length: 12 }).map((_, i) => (
           <KostCardSkeleton key={i} />
         ))}
@@ -38,7 +38,7 @@ const KostList = () => {
 
   return (
     <div className="mt-6">
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-2  justify-center  lg:grid-cols-4 gap-4 ">
         {data?.data?.map((kost: any) => (
           <KostCard
             key={kost.id}

@@ -8,9 +8,9 @@ const DownloadAppSection = dynamic(
 );
 const CTASection = dynamic(() => import("@/features/landing/CTASection"));
 const CampusSection = dynamic(() => import("@/features/landing/CampusSection"));
-const TestimonialSection = dynamic(
-  () => import("@/features/landing/TestimonialSection")
-);
+// const TestimonialSection = dynamic(
+//   () => import("@/features/landing/TestimonialSection")
+// );
 
 const JoinAsOwnerSection = dynamic(
   () => import("@/features/landing/JoinAsOwnerSection")
@@ -45,9 +45,9 @@ export default function Home() {
           <FeaturesSection />
         </AnimateSection>
 
-        <AnimateSection id="testimonial">
+        {/* <AnimateSection id="testimonial">
           <TestimonialSection />
-        </AnimateSection>
+        </AnimateSection> */}
 
         <AnimateSection id="join-as-owner">
           <JoinAsOwnerSection />

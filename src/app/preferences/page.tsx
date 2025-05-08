@@ -33,17 +33,17 @@ const stepContent = [
 ];
 
 import { usePreferenceStore } from "@/stores/preference.store";
-import { useSavePreferences } from "@/hooks/usePreference";
+
 import { useFacilities } from "@/hooks/useFacilities";
+import { usePreference } from "@/hooks/usePreference";
 export default function PreferencesPage() {
   const [step, setStep] = useState(0);
   const lokasi = usePreferenceStore((state) => state.location);
-  console.log(lokasi, "LOKASI");
   const harga = usePreferenceStore((state) => state.price);
   const jenis = usePreferenceStore((state) => state.jenisKost);
   const fasilitasKost = usePreferenceStore((state) => state.kostFacilities);
   const fasilitasKamar = usePreferenceStore((state) => state.roomFacilities);
-  const { mutate, isPending } = useSavePreferences();
+  const { savePreferences, savingPreferences } = usePreference();
   const { data, isLoading } = useFacilities();
 
   const isStepValid =
@@ -62,6 +62,10 @@ export default function PreferencesPage() {
 
   const kostNames = mapIdsToNames(fasilitasKost);
   const kamarNames = mapIdsToNames(fasilitasKamar);
+
+  const handleSave = () => {
+    savePreferences();
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
@@ -171,10 +175,10 @@ export default function PreferencesPage() {
               ) : (
                 <Button
                   className="bg-green-600 hover:bg-green-700 text-white"
-                  disabled={!isStepValid}
-                  onClick={() => mutate()}
+                  disabled={!isStepValid || savingPreferences}
+                  onClick={handleSave}
                 >
-                  {isPending ? "Menyimpan..." : "Simpan Preferensi"}
+                  {savingPreferences ? "Menyimpan..." : "Simpan Preferensi"}
                 </Button>
               )}
             </div>

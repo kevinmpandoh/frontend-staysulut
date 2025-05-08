@@ -1,12 +1,8 @@
 import api from "@/lib/axios";
+import { User } from "@/types/user.type";
 
 type AuthResponse = {
-  data: {
-    id: string;
-    name: string;
-    email: string;
-    role: "penyewa" | "pemilik";
-  };
+  data: User;
 };
 
 export const AuthService = {

@@ -36,7 +36,7 @@ const features = [
 const RegisterTenantForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { registerTenant } = useAuth(); // Hook untuk registrasi
+  const { register: registerTenant } = useAuth(); // Hook untuk registrasi
   const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);

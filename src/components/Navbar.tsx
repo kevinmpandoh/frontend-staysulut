@@ -20,14 +20,14 @@ import clsx from "clsx";
 import { useAuth } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/auth.store";
 // import { useAuth } from "@/contexts/AuthContext";
+import ChatPopup from "@/components/chat/ChatPopup";
 
 const Navbar = () => {
-  // const { user } = useAuthContext();
-  // const [user, setUser] = useState<any>(null);
   const { logout } = useAuth();
   const pathname = usePathname();
   const [showSearch, setShowSearch] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showChatPopup, setShowChatPopup] = useState(false);
 
   const user = useAuthStore((state) => state.user);
   const isHydrated = useAuthStore((state) => state.isHydrated);
@@ -57,12 +57,12 @@ const Navbar = () => {
   ];
   return (
     <>
-      <div className="fixed top-0 left-0 w-full z-50 flex justify-between items-center bg-white shadow-sm">
+      <div className="sticky top-0 left-0 w-full z-50 flex justify-between items-center bg-white shadow-sm">
         <div className="max-w-7xl mx-auto md:w-full px-4 py-6 flex items-center justify-between">
           <div className="flex">
             {/* Logo */}
-            <Link href="/" className="text-xl font-bold text-orange-600">
-              Kost<span className="text-gray-800">ku</span>
+            <Link href="/" className="text-xl font-bold text-primary">
+              STAY<span className="text-gray-800">KOST</span>
             </Link>
 
             {/* Search bar for desktop & tablet */}
@@ -100,6 +100,7 @@ const Navbar = () => {
                 <div className="flex space-x-4 mr-4">
                   <MessageCircle
                     size={24}
+                    onClick={() => setShowChatPopup((prev) => !prev)}
                     className="text-gray-700 cursor-pointer"
                   />
                   <Bell size={24} className="text-gray-700 cursor-pointer" />
@@ -117,13 +118,13 @@ const Navbar = () => {
                     <div className="absolute right-0 mt-2 w-60 divide-y divide-gray-100 bg-white border rounded-lg shadow-md z-50">
                       <div>
                         <Link
-                          href="/profile"
+                          href="/user/profile"
                           className="block px-6 py-3 text-md font-semibold text-gray-700 hover:bg-gray-100"
                         >
                           Profil
                         </Link>
                         <Link
-                          href="/kost-saya"
+                          href="/user/kost-saya"
                           className="block px-6 py-3 text-md font-semibold text-gray-700 hover:bg-gray-100"
                         >
                           Kost Saya
@@ -194,6 +195,7 @@ const Navbar = () => {
           </Link>
         ))}
       </nav>
+      {showChatPopup && <ChatPopup onClose={() => setShowChatPopup(false)} />}
     </>
   );
 };

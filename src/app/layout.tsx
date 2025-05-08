@@ -6,6 +6,8 @@ import "leaflet-geosearch/dist/geosearch.css";
 import Head from "next/head";
 import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
+import LoginModal from "@/components/LoginModal";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,8 +48,11 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <AuthProvider>{children}</AuthProvider>
+        </Providers>
         <Toaster richColors />
+        <LoginModal />
       </body>
     </html>
   );

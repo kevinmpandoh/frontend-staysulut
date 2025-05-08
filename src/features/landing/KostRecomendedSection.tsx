@@ -84,7 +84,7 @@ const KostRecomendedSection = () => {
           {kostRecomended?.data.map((kost: any) => (
             <div key={kost.id} className="min-w-[243px] md:flex-1">
               <KostCard
-                id="1"
+                id={kost.id}
                 title={kost.nama_kost}
                 location={kost.alamat}
                 type={kost.jenis_kost}

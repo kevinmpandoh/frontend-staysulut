@@ -20,6 +20,16 @@ export function middleware(request: NextRequest) {
   //   return NextResponse.redirect(new URL("/", request.url)); // redirect ke home
   // }
 
+  // const url = request.nextUrl.pathname;
+
+  // if (url.startsWith("/dashboard/admin") && role !== "admin") {
+  //   return NextResponse.redirect(new URL("/unauthorized", request.url));
+  // }
+
+  // if (url.startsWith("/dashboard/pemilik") && role !== "pemilik") {
+  //   return NextResponse.redirect(new URL("/unauthorized", request.url));
+  // }
+
   return NextResponse.next();
 }
 

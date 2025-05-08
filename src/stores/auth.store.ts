@@ -1,11 +1,5 @@
+import { User } from "@/types/user.type";
 import { create } from "zustand";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  role: "penyewa" | "pemilik";
-};
 
 type AuthState = {
   user: User | null;

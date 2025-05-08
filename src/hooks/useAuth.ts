@@ -1,130 +1,109 @@
+// hooks/useAuth.ts
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/stores/auth.store";
 import { AuthService } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
-import { AxiosError } from "axios";
 
 export function useAuth() {
-  const setUser = useAuthStore((state) => state.setUser);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const login = async (email: string, password: string, role: string) => {
-    try {
-      const user = await AuthService.login(email, password, role);
-      setUser(user.data);
+  const loginMutation = useMutation({
+    mutationFn: ({
+      email,
+      password,
+      role,
+    }: {
+      email: string;
+      password: string;
+      role: string;
+    }) => AuthService.login(email, password, role),
+    onSuccess: (res, variables) => {
+      setUser(res.data);
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+
+      if (variables.role === "owner") {
+        router.push("/dashboard");
+      } else {
+        router.push("/");
+      }
+    },
+    onError: (err: unknown) => {
+      throw err;
+    },
+  });
+
+  const googleLoginMutation = useMutation({
+    mutationFn: (role: string) => AuthService.loginWithGoogle(role),
+    onSuccess: (res, role) => {
+      setUser(res.data);
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+
       if (role === "owner") {
         router.push("/dashboard");
       } else {
         router.push("/");
       }
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
-        throw err;
-      }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
-    }
-  };
+    },
+    onError: (err: unknown) => {
+      throw err;
+    },
+  });
 
-  const loginWithGoogle = async (role: string) => {
-    try {
-      const user = await AuthService.loginWithGoogle(role);
-      setUser(user.data);
-      if (role === "owner") {
-        router.push("/dashboard");
-      } else {
-        router.push("/");
-      }
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
-        throw err;
-      }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
-    }
-  };
+  const registerMutation = useMutation({
+    mutationFn: (data: any) => AuthService.register(data),
+    onSuccess: () => router.push("/auth/register/verify"),
+    onError: (err: unknown) => {
+      throw err;
+    },
+  });
 
-  const register = async (data: any) => {
-    try {
-      await AuthService.register(data);
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (data: { email: string; role: string }) =>
+      AuthService.forgotPassword(data.email, data.role),
+    onError: (err: unknown) => {
+      throw err;
+    },
+  });
 
-      router.push("/auth/register/verify");
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
-        throw err;
-      }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
-    }
-  };
-  const registerTenant = async (data: any) => {
-    try {
-      await AuthService.register(data);
+  const resetPasswordMutation = useMutation({
+    mutationFn: (data: { email: string; token: string; role: string }) =>
+      AuthService.resetPassword(data.email, data.token, data.role),
+    onError: (err: unknown) => {
+      throw err;
+    },
+  });
 
-      router.push("/auth/register/verify");
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
-        throw err;
-      }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
-    }
-  };
-  const forgotPassword = async (email: string, role: string) => {
-    try {
-      return await AuthService.forgotPassword(email, role);
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
-        throw err;
-      }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
-    }
-  };
-  const resetPassword = async (email: string, token: string, role: string) => {
-    try {
-      return await AuthService.resetPassword(email, token, role);
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
-        throw err;
-      }
-      throw new Error("Terjadi kesalahan, silakan coba lagi.");
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await AuthService.logout(); // kalau tidak ada endpoint logout, bisa dihapus
-    } catch (err) {
-      console.error("Logout error:", err);
-    } finally {
+  const logoutMutation = useMutation({
+    mutationFn: AuthService.logout,
+    onSuccess: () => {
       setUser(null);
-      router.push("/"); // reload page setelah logout
-    }
-  };
-  const isLoggedIn = async () => {
-    try {
-      const user = await AuthService.getUser();
-      setUser(user?.data);
+      queryClient.removeQueries(); // optional: hapus semua cache
+      router.push("/");
+    },
+    onError: () => {
+      setUser(null);
+      router.push("/");
+    },
+  });
 
-      return user;
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        // Langsung lempar error dari Axios agar bisa ditangkap di frontend
-        throw err;
-      }
-      logout(); // auto logout kalau token invalid
-    }
-  };
+  // Untuk mendapatkan user yang sedang login
+  const { data: me, isLoading: isLoadingMe } = useQuery({
+    queryKey: ["me"],
+    queryFn: AuthService.getUser,
+    retry: false,
+    staleTime: 1000 * 60 * 5, // cache 5 menit
+  });
 
   return {
-    login,
-    register,
-    registerTenant,
-    logout,
-    loginWithGoogle,
-    forgotPassword,
-    resetPassword,
-    isLoggedIn,
+    login: loginMutation.mutate,
+    loginGoogle: googleLoginMutation.mutate,
+    register: registerMutation.mutate,
+    forgotPassword: forgotPasswordMutation.mutate,
+    resetPassword: resetPasswordMutation.mutate,
+    logout: logoutMutation.mutate,
+    isLoadingMe,
+    me: me?.data,
   };
 }

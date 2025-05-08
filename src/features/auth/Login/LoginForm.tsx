@@ -51,17 +51,22 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (data: any) => {
-    try {
-      await login(data.email, data.password, role);
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const errorMessage =
-          error.response?.data?.message || "Terjadi kesalahan, coba lagi.";
-        setError("email", { type: "manual", message: errorMessage });
-      } else {
-        console.error("Error:", error);
+    // try {
+    // await login(data.email, data.password, role);
+    login(
+      { email: data.email, password: data.password, role },
+      {
+        onError: (error: any) => {
+          if (error instanceof AxiosError) {
+            const errorMessage =
+              error.response?.data?.message || "Terjadi kesalahan, coba lagi.";
+            setError("email", { type: "manual", message: errorMessage });
+          } else {
+            console.error("Error:", error);
+          }
+        },
       }
-    }
+    );
   };
 
   const handleLoginWithGoogle = async () => {

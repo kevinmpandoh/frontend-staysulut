@@ -33,7 +33,7 @@ const ForgotPasswordForm = () => {
     setMessage(null);
 
     try {
-      await forgotPassword(data.email, role);
+      await forgotPassword({ email: data.email, role });
       setMessage("Link reset password telah dikirim ke email Anda.");
       reset();
     } catch (error) {

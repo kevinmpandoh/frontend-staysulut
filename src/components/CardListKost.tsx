@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { useWishlist } from "@/hooks/useWishlist";
 
 interface KostCardProps {
   id: string;
@@ -21,6 +22,7 @@ interface KostCardProps {
   price: number;
   images: string[];
   facilities: string[];
+  claasName?: string;
 }
 
 // Mapping fasilitas ke ikon & label
@@ -38,8 +40,14 @@ const KostCard = ({
   price,
   images,
   facilities,
+  claasName,
 }: KostCardProps) => {
   const [currentImage, setCurrentImage] = useState(0);
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+
+  const isWishlisted = wishlist?.data.some(
+    (item: any) => item.kostType_id === id
+  );
 
   const handleNext = () => {
     setCurrentImage((prev) => (prev + 1) % images.length);
@@ -53,8 +61,35 @@ const KostCard = ({
     setCurrentImage(index);
   };
 
+  const toggleWishlist = async () => {
+    if (isWishlisted) {
+      removeFromWishlist(id);
+    } else {
+      addToWishlist(id);
+    }
+    // try {
+    //   // const res = await fetch(`/api/wishlist/${id}`, {
+    //   //   method: isWishlisted ? "DELETE" : "POST",
+    //   //   credentials: "include",
+    //   // });
+    //   // if (res.ok) {
+    //   setIsWishlisted(!isWishlisted);
+    //   toast.success(
+    //     isWishlisted ? "Dihapus dari wishlist" : "Ditambahkan ke wishlist"
+    //   );
+    //   // } else {
+    //   //   toast.error("Gagal memperbarui wishlist");
+    //   // }
+    // } catch (err) {
+    //   toast.error("Terjadi kesalahan");
+    //   console.error(err);
+    // }
+  };
+
   return (
-    <div className="relative bg-white rounded-2xl border overflow-hidden max-w-[260px] group">
+    <div
+      className={`bg-white shadow-md rounded-lg overflow-hidden  relative  border max-w-sm lg:max-w-[260px] group  ${claasName}`}
+    >
       <div className="relative w-full h-48 overflow-hidden">
         {/* Image Slider */}
         <div
@@ -75,8 +110,18 @@ const KostCard = ({
         </div>
 
         {/* Favorite icon */}
-        <div className="absolute top-2 right-2 bg-white/80 rounded-full p-1 hover:bg-white">
-          <Heart className="w-5 h-5 text-gray-600 hover:text-red-500 cursor-pointer" />
+        <div
+          onClick={(e) => {
+            e.preventDefault(); // Biar ga ikut klik ke Link
+            toggleWishlist();
+          }}
+          className="absolute top-2 right-2 bg-white/80 rounded-full p-1 hover:bg-white"
+        >
+          <Heart
+            className={`w-5 h-5 cursor-pointer ${
+              isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
+            }`}
+          />
         </div>
 
         {/* Navigasi gambar */}
@@ -135,7 +180,7 @@ const KostCard = ({
             </div>
           </div>
           <div>
-            <p className="text-gray-600 text-sm mb-1">Harga per bulan</p>
+            <p className="text-gray-600 text-sm mb-1">Harga</p>
             <p className="text-md font-semibold">
               Rp {price.toLocaleString()}{" "}
               <span className="text-sm font-normal">/bulan</span>

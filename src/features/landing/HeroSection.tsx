@@ -4,7 +4,7 @@ import React from "react";
 
 const HeroSection = () => {
   return (
-    <section className="bg-blue-100 text-slate-600 mx-auto py-16 mt-20 px-4 md:px-12 xl:px-36 flex flex-col-reverse md:flex-row items-center justify-between">
+    <section className="bg-blue-100 text-slate-600 mx-auto py-16 px-4 md:px-12 xl:px-36 flex flex-col-reverse md:flex-row items-center justify-between">
       {/* Left Side */}
       <div className="mt-10 md:w-1/3 w-full">
         <h1 className="text-3xl md:text-5xl leading-snug md:leading-[3.5rem] font-bold mb-4 drop-shadow-2xl text-center md:text-left">
