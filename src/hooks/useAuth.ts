@@ -21,6 +21,7 @@ export function useAuth() {
     }) => AuthService.login(email, password, role),
     onSuccess: (res, variables) => {
       setUser(res.data);
+
       queryClient.invalidateQueries({ queryKey: ["me"] });
 
       if (variables.role === "owner") {

@@ -1,26 +1,38 @@
+// stores/auth.store.ts
 import { User } from "@/types/user.type";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type AuthState = {
   user: User | null;
+  isAuthenticated: boolean;
   isHydrated: boolean;
   setUser: (user: User | null) => void;
-  isLoggedIn: () => boolean;
   logout: () => void;
   setHydrated: (value: boolean) => void;
 };
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  user: null,
-  isHydrated: false,
-  setUser: (user) => set({ user, isHydrated: true }),
-  isLoggedIn: () => !!get().user,
-  setHydrated: (value: boolean) => set({ isHydrated: value }),
-  logout: () => {
-    // Hapus cookie token
-
-    // document.cookie = "token=; Max-Age=0; path=/;";
-    set({ user: null, isHydrated: false });
-    // window.location.href = "/auth/login";
-  },
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: null,
+      isAuthenticated: false,
+      isHydrated: false,
+      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      logout: () =>
+        set({
+          user: null,
+          isAuthenticated: false,
+          isHydrated: false,
+        }),
+      setHydrated: (value) => set({ isHydrated: value }),
+    }),
+    {
+      name: "auth-store", // nama localStorage key
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    }
+  )
+);

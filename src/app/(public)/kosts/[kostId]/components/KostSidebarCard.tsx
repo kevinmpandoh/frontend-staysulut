@@ -18,7 +18,7 @@ export default function KostSidebarCard({
   kostId: string;
   handleBookingClick: (tanggalMasuk: string) => void;
 }) {
-  const { isLoggedIn, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   const { open } = useLoginModal();
   const { startChat } = useChat();
 
@@ -32,7 +32,7 @@ export default function KostSidebarCard({
   };
 
   const handleChatClick = async (kostId: string) => {
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
       open();
       return;
     }

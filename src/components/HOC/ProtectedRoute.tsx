@@ -1,32 +1,47 @@
-// "use clint";
-// import React, { useEffect, useState } from "react";
-// import { useRouter } from "next/navigation";
-// import { useAuth } from "@/hooks/useAuth";
+"use client";
 
-// interface Props {
-//   children: React.ReactNode;
-// }
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/auth.store";
 
-// const ProtectedRoute: React.FC<Props> = ({ children }) => {
-//   const { isLoggedIn } = useAuth();
-//   const router = useRouter();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  allowedRoles?: string[]; // contoh: ["tenant", "admin"]
+}
 
-//   const [isLoading, setIsLoading] = useState(true);
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  allowedRoles,
+}) => {
+  const router = useRouter();
+  const { user, isAuthenticated, isHydrated } = useAuthStore();
 
-//   useEffect(() => {
-//     const checkUser = async () => {
-//       const tes = await isLoggedIn();
-//       console.log(tes, "TESS");
-//     };
+  const [isLoading, setIsLoading] = useState(true);
 
-//     checkUser();
-//   }, [isLoggedIn, router]);
+  useEffect(() => {
+    // Tunggu sampai Zustand hydration selesai
+    if (isHydrated) {
+      // Jika belum login → redirect ke login
+      if (!isAuthenticated || !user) {
+        router.replace("/auth/login");
+        return;
+      }
 
-//   if (isLoading) {
-//     return <h1>SABAR YA</h1>;
-//   }
+      // Jika login, tapi role tidak sesuai
+      if (allowedRoles && !allowedRoles.includes(user.role)) {
+        router.replace("/unauthorized");
+        return;
+      }
 
-//   return <>{children}</>;
-// };
+      setIsLoading(false); // lolos semua pengecekan
+    }
+  }, [isHydrated, isAuthenticated, user, allowedRoles, router]);
 
-// export default ProtectedRoute;
+  if (isLoading) {
+    return <div className="text-center py-12">Loading...</div>;
+  }
+
+  return <>{children}</>;
+};
+
+export default ProtectedRoute;

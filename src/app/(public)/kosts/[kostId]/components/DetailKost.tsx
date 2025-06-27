@@ -27,7 +27,7 @@ const DetailKost = ({ kostId }: DetailKostProps) => {
   const { data: kost, isLoading, isError, error } = useKostDetail(kostId);
   const router = useRouter();
 
-  const { isLoggedIn } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   if (isLoading) return <KostDetailSkeleton />;
 
@@ -41,7 +41,7 @@ const DetailKost = ({ kostId }: DetailKostProps) => {
     );
   }
   const handleBookingCLick = (tanggalMasuk: string) => {
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
       useLoginModal.getState().open();
       return;
     }

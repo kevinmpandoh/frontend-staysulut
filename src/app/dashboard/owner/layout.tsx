@@ -1,5 +1,6 @@
 "use client";
 
+import ProtectedRoute from "@/components/HOC/ProtectedRoute";
 import { useSidebar } from "@/contexts/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 // import AppHeader from "@/layout/AppHeader";
@@ -22,21 +23,23 @@ export default function AdminLayout({
     : "lg:ml-[90px]";
 
   return (
-    <div className="min-h-screen xl:flex">
-      {/* Sidebar and Backdrop */}
-      <AppSidebar />
-      {/* <Backdrop /> */}
-      {/* Main Content Area */}
-      <div
-        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
-      >
-        {/* Header */}
-        <AppHeader />
-        {/* Page Content */}
-        <main className="mx-auto max-w-[1246px] md:p-10 flex-1 p-6 overflow-y-auto ">
-          {children}
-        </main>
+    <ProtectedRoute allowedRoles={["owner"]}>
+      <div className="min-h-screen xl:flex">
+        {/* Sidebar and Backdrop */}
+        <AppSidebar />
+        {/* <Backdrop /> */}
+        {/* Main Content Area */}
+        <div
+          className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
+        >
+          {/* Header */}
+          <AppHeader />
+          {/* Page Content */}
+          <main className="mx-auto max-w-[1246px] md:p-10 flex-1 p-6 overflow-y-auto ">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

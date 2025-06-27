@@ -12,8 +12,8 @@ import { useLoginModal } from "@/stores/loginModal.store";
 
 export const useWishlist = () => {
   const queryClient = useQueryClient();
-  const { isLoggedIn, user } = useAuthStore();
-  const isTenant = isLoggedIn() && user?.role === "tenant";
+  const { isAuthenticated, user } = useAuthStore();
+  const isTenant = isAuthenticated && user?.role === "tenant";
 
   const { data: wishlist, isLoading } = useQuery({
     queryKey: ["wishlist"],
@@ -59,8 +59,8 @@ export const useWishlist = () => {
 };
 
 export const useIsWishlisted = (kostId: string) => {
-  const { isLoggedIn, user } = useAuthStore();
-  const isTenant = isLoggedIn() && user?.role === "tenant";
+  const { isAuthenticated, user } = useAuthStore();
+  const isTenant = isAuthenticated && user?.role === "tenant";
   return useQuery({
     queryKey: ["wishlist", kostId],
     queryFn: () => isWishlisted(kostId),
