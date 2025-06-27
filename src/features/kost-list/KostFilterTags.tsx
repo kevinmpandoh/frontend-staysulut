@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useKostFilterStore } from "@/stores/kostFilter.store";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge2";
 
 const filterItems: {
   key: "sort" | "price" | "facilities" | "type" | "rules" | "rating";

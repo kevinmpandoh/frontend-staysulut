@@ -3,12 +3,26 @@ import React from "react";
 import type { Payment } from "@/types/billing.type";
 import { copyToClipboard } from "@/utils/copyToClipboard";
 import { Copy } from "lucide-react";
+import { PAYMENT_METHOD } from "@/constants/paymentMethod";
+import { PaymentSteps } from "./PaymentSteps";
 
 interface PaymentInstructionProps {
   payment: Payment;
 }
 
+const findPaymentMethod = (value: string) => {
+  for (const category of PAYMENT_METHOD) {
+    const method = category.methods.find((m) => m.value === value);
+    if (method) return method;
+  }
+  return null;
+};
+
 export const PaymentInstruction = ({ payment }: PaymentInstructionProps) => {
+  const selectedMethod = findPaymentMethod(
+    payment.bank || payment.payment_method
+  );
+
   return (
     <div className="mb-8">
       <p className="font-semibold mb-4">Silahkan bayar melalui</p>
@@ -18,13 +32,13 @@ export const PaymentInstruction = ({ payment }: PaymentInstructionProps) => {
           <span>Nama Bank</span>
           <span className="flex items-center space-x-1">
             <Image
-              src="/logos/bank/bni.png"
-              alt="BNI bank logo in orange and blue"
+              src={selectedMethod?.logo || "/logos/bank/default.png"}
+              alt={`${selectedMethod?.name || "Bank"} logo`}
               width={38}
               height={38}
               className="w-8 h-8 object-contain"
             />
-            <span>Bank BNI</span>
+            <span>{selectedMethod?.name || payment.bank?.toUpperCase()}</span>
           </span>
         </div>
 
@@ -33,7 +47,7 @@ export const PaymentInstruction = ({ payment }: PaymentInstructionProps) => {
             <div className="flex items-center justify-between">
               <span>Kode Perusahaan</span>
               <button
-                onClick={() => copyToClipboard("70012")}
+                onClick={() => copyToClipboard(payment.biller_code)}
                 className="flex items-center space-x-1 font-semibold text-gray-700 cursor-pointer"
               >
                 <Copy size={18} />
@@ -44,7 +58,7 @@ export const PaymentInstruction = ({ payment }: PaymentInstructionProps) => {
             <div className="flex items-center justify-between">
               <span>Nomor Virtual Account</span>
               <button
-                onClick={() => copyToClipboard("0812391823791283")}
+                onClick={() => copyToClipboard(payment.bill_key)}
                 className="flex items-center space-x-1 font-semibold text-gray-700 cursor-pointer"
               >
                 <Copy size={18} className="text-gray-600" />
@@ -88,6 +102,8 @@ export const PaymentInstruction = ({ payment }: PaymentInstructionProps) => {
           </button>
         </div>
       </div>
+
+      <PaymentSteps method={payment.bank || payment.payment_method} />
     </div>
   );
 };

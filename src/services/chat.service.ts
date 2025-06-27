@@ -22,4 +22,8 @@ export const chatService = {
     });
     return response.data.data;
   },
+  getChatTenant: async (kostTypeId: string, tenantId: string) => {
+    const response = await api.get(`/chat/owner/${kostTypeId}/${tenantId}`);
+    return response.data.data;
+  },
 };

@@ -25,7 +25,7 @@ export default function PriceStep() {
             const raw = parseCurrency(e.target.value);
             setPrice(raw);
           }}
-          className=" p-6 rounded pl-12 md:text-lg text-gray-600 font-semibold"
+          className=" p-6 rounded pl-12 md:text-sm text-gray-600"
           placeholder="Contoh: 1500000"
         />
       </div>

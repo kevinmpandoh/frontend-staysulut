@@ -12,12 +12,13 @@ import { useLoginModal } from "@/stores/loginModal.store";
 
 export const useWishlist = () => {
   const queryClient = useQueryClient();
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn());
+  const { isLoggedIn, user } = useAuthStore();
+  const isTenant = isLoggedIn() && user?.role === "tenant";
 
   const { data: wishlist, isLoading } = useQuery({
     queryKey: ["wishlist"],
     queryFn: getWishlist,
-    enabled: isLoggedIn,
+    enabled: isTenant,
   });
 
   const { mutate: add, isPending: adding } = useMutation({
@@ -58,8 +59,11 @@ export const useWishlist = () => {
 };
 
 export const useIsWishlisted = (kostId: string) => {
+  const { isLoggedIn, user } = useAuthStore();
+  const isTenant = isLoggedIn() && user?.role === "tenant";
   return useQuery({
     queryKey: ["wishlist", kostId],
     queryFn: () => isWishlisted(kostId),
+    enabled: isTenant && !!kostId,
   });
 };

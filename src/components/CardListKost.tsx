@@ -5,14 +5,16 @@ import {
   Heart,
   ChevronLeft,
   ChevronRight,
-  Wifi,
-  Utensils,
-  ParkingCircle,
-  LucideIcon,
+  // Wifi,
+  // Utensils,
+  // ParkingCircle,
+  // LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { useWishlist } from "@/hooks/useWishlist";
+import { DEFAULT_FACILITY_ICON, FACILITY_ICONS } from "@/constants/facilities";
+import { useAuthStore } from "@/stores/auth.store";
 
 interface KostCardProps {
   id: string;
@@ -24,13 +26,6 @@ interface KostCardProps {
   facilities: string[];
   claasName?: string;
 }
-
-// Mapping fasilitas ke ikon & label
-const FACILITY_ICONS: Record<string, { label: string; icon: LucideIcon }> = {
-  wifi: { label: "Wifi", icon: Wifi },
-  dapur: { label: "Dapur Umum", icon: Utensils },
-  parkiran: { label: "Parkiran", icon: ParkingCircle },
-};
 
 const KostCard = ({
   id,
@@ -44,6 +39,7 @@ const KostCard = ({
 }: KostCardProps) => {
   const [currentImage, setCurrentImage] = useState(0);
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const { user } = useAuthStore();
 
   const isWishlisted = wishlist?.data.some(
     (item: any) => item.kostType_id === id
@@ -67,23 +63,6 @@ const KostCard = ({
     } else {
       addToWishlist(id);
     }
-    // try {
-    //   // const res = await fetch(`/api/wishlist/${id}`, {
-    //   //   method: isWishlisted ? "DELETE" : "POST",
-    //   //   credentials: "include",
-    //   // });
-    //   // if (res.ok) {
-    //   setIsWishlisted(!isWishlisted);
-    //   toast.success(
-    //     isWishlisted ? "Dihapus dari wishlist" : "Ditambahkan ke wishlist"
-    //   );
-    //   // } else {
-    //   //   toast.error("Gagal memperbarui wishlist");
-    //   // }
-    // } catch (err) {
-    //   toast.error("Terjadi kesalahan");
-    //   console.error(err);
-    // }
   };
 
   return (
@@ -99,7 +78,7 @@ const KostCard = ({
           {images.map((img, i) => (
             <Image
               key={i}
-              src={img}
+              src={img || "/kost-image-default.png"}
               alt={`kost image ${i}`}
               width={400}
               height={200}
@@ -109,20 +88,21 @@ const KostCard = ({
           ))}
         </div>
 
-        {/* Favorite icon */}
-        <div
-          onClick={(e) => {
-            e.preventDefault(); // Biar ga ikut klik ke Link
-            toggleWishlist();
-          }}
-          className="absolute top-2 right-2 bg-white/80 rounded-full p-1 hover:bg-white"
-        >
-          <Heart
-            className={`w-5 h-5 cursor-pointer ${
-              isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
-            }`}
-          />
-        </div>
+        {user?.role === "tenant" && (
+          <div
+            onClick={(e) => {
+              e.preventDefault(); // Biar ga ikut klik ke Link
+              toggleWishlist();
+            }}
+            className="absolute top-2 right-2 bg-white/80 rounded-full p-1 hover:bg-white"
+          >
+            <Heart
+              className={`w-5 h-5 cursor-pointer ${
+                isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
+              }`}
+            />
+          </div>
+        )}
 
         {/* Navigasi gambar */}
         {images.length > 1 && (
@@ -167,13 +147,13 @@ const KostCard = ({
             <p className="text-gray-600 text-sm mb-2">{location}</p>
 
             <div className="flex flex-wrap text-gray-600 text-sm mb-2 gap-x-2">
-              {facilities.map((facility) => {
-                const data = FACILITY_ICONS[facility];
-                if (!data) return null;
-                const Icon = data.icon;
+              {facilities.map((key, index) => {
+                const facility = FACILITY_ICONS[key];
+                const Icon = facility?.icon || DEFAULT_FACILITY_ICON;
+                const label = facility?.label || key;
                 return (
-                  <div key={facility} className="flex items-center gap-1 mb-1">
-                    <Icon className="w-4 h-4" /> {data.label}
+                  <div key={index} className="flex items-center gap-1 mb-1">
+                    <Icon className="w-4 h-4" /> {label}
                   </div>
                 );
               })}

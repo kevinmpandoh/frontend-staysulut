@@ -6,13 +6,16 @@ import ChatSidebar from "./ChatSidebar";
 import ChatHeader from "./ChatHeader";
 import ChatMessages from "./ChatMessages";
 import ChatInput from "./ChatInput";
-import { useState } from "react";
 import { useChat } from "@/hooks/useChat";
 import { useMessages } from "@/hooks/useMessages";
-import { Loader2, MessageSquare } from "lucide-react";
+import { Loader2, MessageSquare, X } from "lucide-react";
+import { useAuthStore } from "@/stores/auth.store";
+import { useChatPopupStore } from "@/stores/chatPopup.store";
+import { useEffect } from "react";
 
-const ChatPopup = ({ onClose }: { onClose: () => void }) => {
-  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+const ChatPopup = () => {
+  const { selectedChatId, closePopup, setSelectedChatId } = useChatPopupStore();
+  const user = useAuthStore((state) => state.user);
 
   const { chatList, loadingChatList } = useChat();
   const {
@@ -27,6 +30,23 @@ const ChatPopup = ({ onClose }: { onClose: () => void }) => {
 
     sendMessage({ chatRoomId: selectedChatId, message }); // API post/send via socket/react query
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && selectedChatId) {
+        setSelectedChatId(""); // hilangkan chat yang sedang dibuka
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  if (!user) {
+    return;
+  }
 
   return (
     <motion.div
@@ -46,8 +66,8 @@ const ChatPopup = ({ onClose }: { onClose: () => void }) => {
         ) : (
           <ChatSidebar
             chats={chatList ?? []}
-            onSelect={setSelectedChatId}
             selectedChatId={selectedChatId}
+            user={user}
           />
         )}
 
@@ -57,15 +77,24 @@ const ChatPopup = ({ onClose }: { onClose: () => void }) => {
             <>
               {/* Header */}
               <ChatHeader
-                name={data?.namaKost}
-                image={data?.photo}
+                // name={data?.namaKost}
+                // image={data?.photo}
+                name={
+                  user?.role === "tenant"
+                    ? data?.namaKost
+                    : data?.sender?.name || "User"
+                }
+                image={
+                  user?.role === "tenant"
+                    ? data?.photo
+                    : data?.sender?.avatar || "/profile-default.png"
+                }
                 isLoading={loadingMessages}
-                onClose={onClose}
               />
               {/* Messages */}
               <ChatMessages
                 messages={data?.messages ?? []}
-                currentUserId={"67fcfbcc7c51f33d37b2000b"}
+                currentUserId={user?.id}
                 isLoading={loadingMessages}
                 chatRoomId={selectedChatId}
               />
@@ -73,10 +102,21 @@ const ChatPopup = ({ onClose }: { onClose: () => void }) => {
               <ChatInput onSend={handleSend} isSending={seendingMessage} />
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400 p-6 gap-2 w-[520px] max-w-md">
-              <MessageSquare className="w-8 h-8" />
-              <p className="text-sm">Pilih chat untuk mulai percakapan</p>
-            </div>
+            <>
+              <div className="flex items-center justify-end max-w-md w-full border-b border-gray-200 px-6 py-4">
+                <button
+                  aria-label="Close chat"
+                  className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                  onClick={closePopup}
+                >
+                  <X />
+                </button>
+              </div>
+              <div className="flex flex-col items-center justify-center h-full text-gray-400 p-6 gap-2 w-[520px] max-w-md">
+                <MessageSquare className="w-8 h-8" />
+                <p className="text-sm">Pilih chat untuk mulai percakapan</p>
+              </div>
+            </>
           )}
         </div>
       </div>

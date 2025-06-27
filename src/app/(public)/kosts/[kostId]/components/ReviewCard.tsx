@@ -1,7 +1,7 @@
 import { Review } from "@/types/Review.type";
 
 import { Star, StarHalf, StarOff } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar2";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
@@ -10,8 +10,8 @@ export function ReviewCard({ review }: { review: Review }) {
     <div key={review.id} className="space-y-3 border-b pb-6 px-6">
       <div className="flex items-start gap-4">
         <Avatar>
-          {review.avatarUrl ? (
-            <AvatarImage src={review.avatarUrl} />
+          {review.avatar ? (
+            <AvatarImage src={review.avatar} />
           ) : (
             <AvatarFallback>
               {review.name.charAt(0).toUpperCase()}

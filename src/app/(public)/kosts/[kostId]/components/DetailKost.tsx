@@ -24,24 +24,30 @@ interface DetailKostProps {
 }
 
 const DetailKost = ({ kostId }: DetailKostProps) => {
-  const { data: kost, isLoading, isError } = useKostDetail(kostId);
+  const { data: kost, isLoading, isError, error } = useKostDetail(kostId);
   const router = useRouter();
 
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn());
+  const { isLoggedIn } = useAuthStore();
 
   if (isLoading) return <KostDetailSkeleton />;
 
-  if (isError || !kost)
+  if (isError || !kost) {
+    if ((error as any)?.status === 404) {
+      return <KostError message="Kost tidak ditemukan atau sudah dihapus." />;
+    }
+
     return (
       <KostError message="Gagal memuat detail kost. Silakan coba lagi nanti." />
     );
-
-  const handleBookingCLick = () => {
+  }
+  const handleBookingCLick = (tanggalMasuk: string) => {
     if (!isLoggedIn) {
       useLoginModal.getState().open();
       return;
     }
-    router.push(`/kosts/${kostId}/booking`);
+
+    // Kamu bisa kirim tanggal masuk ke halaman booking, atau simpan di store
+    router.push(`/kosts/${kostId}/booking?tanggalMasuk=${tanggalMasuk}`);
   };
 
   return (
@@ -49,7 +55,7 @@ const DetailKost = ({ kostId }: DetailKostProps) => {
       <div className="max-w-6xl mx-auto px-4 py-6">
         <KostImageGallery photos={kost?.photos} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-9 gap-20 mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-9 gap-10 mt-8">
           <div className="lg:col-span-6 space-y-6  ">
             <KostInfo
               id={kost.id}
@@ -61,7 +67,7 @@ const DetailKost = ({ kostId }: DetailKostProps) => {
             />
             <OwnerInfo
               ownerName={kost.owner?.name}
-              ownerPhoto="/profile-default.png"
+              ownerPhoto={kost.owner?.avatar || "/profile-default.png"}
             />
             <KostDescription description={kost.description} />
             <KostFacilities
@@ -83,51 +89,13 @@ const DetailKost = ({ kostId }: DetailKostProps) => {
           <div className="h-fit lg:col-span-3 sticky top-32">
             <KostSidebarCard
               price={kost.price}
+              kostId={kost.id}
               handleBookingClick={handleBookingCLick}
             />
           </div>
         </div>
 
-        <NearbyKostRecommendations
-          kosts={[
-            {
-              id: 1,
-              nama_kost: "Kost A",
-              alamat: "Jl. Kost A No.1",
-              jenis_kost: "Putra",
-              harga_perbulan: 1000000,
-              foto: ["/kost.jpg", "/kost2.png"],
-              facilities: ["Wifi", "AC"],
-            },
-            {
-              id: 2,
-              nama_kost: "Kost B",
-              alamat: "Jl. Kost B No.2",
-              jenis_kost: "Putri",
-              harga_perbulan: 1200000,
-              foto: ["/kost.jpg", "/kost2.png"],
-              facilities: ["Wifi", "Kamar Mandi Dalam"],
-            },
-            {
-              id: 3,
-              nama_kost: "Kost B",
-              alamat: "Jl. Kost B No.2",
-              jenis_kost: "Putri",
-              harga_perbulan: 1200000,
-              foto: ["/kost.jpg", "/kost2.png"],
-              facilities: ["Wifi", "Kamar Mandi Dalam"],
-            },
-            {
-              id: 4,
-              nama_kost: "Kost B",
-              alamat: "Jl. Kost B No.2",
-              jenis_kost: "Putri",
-              harga_perbulan: 1200000,
-              foto: ["/kost.jpg", "/kost2.png"],
-              facilities: ["Wifi", "Kamar Mandi Dalam"],
-            },
-          ]}
-        />
+        <NearbyKostRecommendations kosts={kost.nearbyKosts} />
       </div>
     </>
   );

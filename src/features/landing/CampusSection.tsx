@@ -2,6 +2,11 @@ import CampusCard from "../../components/CampusCard";
 
 const campusList = [
   {
+    name: "Universitas Negeri Manado",
+    slug: "unima",
+    logo: "/logos/unima.png",
+  },
+  {
     name: "Universitas Sam Ratulangi",
     slug: "unsrat",
     logo: "/logos/unsrat.png",
@@ -12,18 +17,13 @@ const campusList = [
     logo: "/logos/politeknik.png",
   },
   {
-    name: "Universitas Negeri Manado",
-    slug: "unima",
-    logo: "/logos/unima.png",
-  },
-  {
     name: "Prisma Manado",
     slug: "prisma",
     logo: "/logos/prisma.png",
   },
   {
     name: "Universitas De La Salle",
-    slug: "dlsu",
+    slug: "delasalle",
     logo: "/logos/delasalle.jpg",
   },
   {

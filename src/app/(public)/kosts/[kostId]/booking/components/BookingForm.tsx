@@ -8,6 +8,7 @@ import DurasiSelector from "./DurasiSelector";
 import UploadDocument from "./UploadDocument";
 import TanggalMasukModal from "./BookingDateModal";
 import { useBooking } from "@/hooks/useBooking";
+import { useSearchParams } from "next/navigation";
 
 interface BookingFormProps {
   kostId: string; // id kost yang mau di-booking
@@ -29,6 +30,9 @@ const schema = yup.object({
 });
 
 const BookingForm = ({ kostId, onSuccess }: BookingFormProps) => {
+  const searchParams = useSearchParams();
+  const tanggalMasukFromURL = searchParams.get("tanggalMasuk");
+
   const user = useAuthStore((state) => state.user);
 
   const { createBooking, creating } = useBooking();
@@ -50,9 +54,9 @@ const BookingForm = ({ kostId, onSuccess }: BookingFormProps) => {
 
     try {
       await createBooking({
-        durasi: data.durasi,
-        kost_type: kostId,
-        tanggal_masuk: localDate,
+        duration: data.durasi,
+        kostType: kostId,
+        startDate: localDate,
       });
 
       onSuccess(); // Kalau berhasil booking, trigger success
@@ -73,7 +77,8 @@ const BookingForm = ({ kostId, onSuccess }: BookingFormProps) => {
     resolver: yupResolver(schema),
     defaultValues: {
       durasi: 1,
-      tanggalMasuk: new Date().toISOString().split("T")[0],
+      tanggalMasuk:
+        tanggalMasukFromURL || new Date().toISOString().split("T")[0],
       ktp: null, // ini bisa null
       catatan: "", // opsional
     },

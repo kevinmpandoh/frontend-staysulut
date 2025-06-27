@@ -22,7 +22,7 @@ export const CountdownTimer = ({
       </p>
       {timeLeft ? (
         <p className="text-sm text-gray-700 mt-1">
-          Sisa waktu: {timeLeft.hours}j {timeLeft.minutes}m {timeLeft.seconds}s
+          Sisa waktu: {timeLeft.hours}:{timeLeft.minutes}:{timeLeft.seconds}
         </p>
       ) : (
         <p className="text-sm text-red-500 mt-1">

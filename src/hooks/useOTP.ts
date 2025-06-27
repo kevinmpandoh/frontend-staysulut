@@ -20,7 +20,7 @@ export function useOTP(email: string, role: "tenant" | "owner") {
         if (role === "owner") {
           router.push("/dashboard");
         } else {
-          router.push("/");
+          router.push("/preferences");
         }
       } catch (err: any) {
         setError(err.message);

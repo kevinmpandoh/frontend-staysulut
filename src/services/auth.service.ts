@@ -1,5 +1,6 @@
 import api from "@/lib/axios";
 import { User } from "@/types/user.type";
+import { handleAxiosError } from "@/utils/handleAxiosError";
 
 type AuthResponse = {
   data: User;
@@ -19,13 +20,17 @@ export const AuthService = {
   },
 
   register: async (data: any) => {
-    const response = await api.post<AuthResponse>(`/auth/tenant/register`, {
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      password: data.password,
-    });
-    return response.data;
+    try {
+      const response = await api.post<AuthResponse>(`/auth/tenant/register`, {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+      });
+      return response.data;
+    } catch (error) {
+      throw handleAxiosError(error);
+    }
   },
   forgotPassword: async (email: string, role: string) => {
     const response = await api.post<AuthResponse>(
@@ -83,5 +88,10 @@ export const AuthService = {
     } catch (error: any) {
       throw error;
     }
+  },
+
+  loginAdmin: async (payload: { email: string; password: string }) => {
+    const response = await api.post(`/auth/admin/login`, payload);
+    return response.data;
   },
 };

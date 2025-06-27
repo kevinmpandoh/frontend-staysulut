@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { Skeleton } from "../ui/skeleton";
+import { motion } from "framer-motion";
 
 interface Message {
   id: string;
   text: string;
   senderId: string;
+  senderName: string;
   createdAt: string;
 }
 
@@ -17,6 +19,11 @@ interface ChatMessagesProps {
   isLoading: boolean;
   chatRoomId: string;
 }
+
+const formatTime = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
 
 const ChatMessages = ({
   messages: initialMessages,
@@ -78,50 +85,39 @@ const ChatMessages = ({
   }
   return (
     <div className="flex-1 w-full max-w-md overflow-y-auto scrollbar-thin px-6 py-4 space-y-6 text-sm text-gray-700">
-      <div>
-        <p className="mb-1 font-semibold text-gray-700">Andri Thomas</p>
-        <p className="inline-block bg-gray-100 rounded-lg px-4 py-3 max-w-[70%]">
-          I want to make an appointment tomorrow from 2:00 to 5:00pm?
-        </p>
-        <p className="mt-1 text-xs text-gray-400">1:55pm</p>
-      </div>
-
-      <div className="flex justify-end items-end flex-col w-full">
-        <p className="bg-blue-600 text-white rounded-lg px-4 py-3  max-w-[70%]">
-          Hello, Thomas! I will check the schedule and inform you.
-        </p>
-        <p className="mt-1 text-xs text-gray-400 self-end">1:58pm</p>
-      </div>
-
-      <div>
-        <p className="mb-1 font-semibold text-gray-700">Andri Thomas</p>
-        <p className="inline-block bg-gray-100 rounded-lg px-4 py-3 max-w-[70%] text-gray-500">
-          Ok, Thanks for your reply.
-        </p>
-        <p className="mt-1 text-xs text-gray-400">1:59pm</p>
-      </div>
-
-      <div className="flex justify-end items-end flex-col w-full">
-        <p className="bg-blue-600 text-white rounded-lg px-4 py-3 max-w-[70%]">
-          You are welcome!
-        </p>
-        <p className="mt-1 text-xs text-gray-400 self-end">2:00pm</p>
-      </div>
       {messages.map((msg) => {
         const isMe = msg.senderId === currentUserId;
+
         return (
-          <div
+          <motion.div
             key={msg.id}
-            className={`flex ${isMe ? "justify-end" : "justify-start"}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}
           >
-            <div
-              className={`max-w-xs px-3 py-2 text-sm rounded-lg ${
-                isMe ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
-              }`}
-            >
-              {msg.text}
+            <div className="space-y-1 max-w-[80%]">
+              {!isMe && (
+                <p className="font-semibold text-gray-700">{msg.senderName}</p>
+              )}
+              <div
+                className={`px-4 py-3 rounded-lg text-sm ${
+                  isMe
+                    ? "bg-blue-600 text-white self-end"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
+                {msg.text}
+              </div>
+              <p
+                className={`text-xs text-gray-400 ${
+                  isMe ? "text-right" : "text-left"
+                }`}
+              >
+                {formatTime(msg.createdAt)}
+              </p>
             </div>
-          </div>
+          </motion.div>
         );
       })}
 

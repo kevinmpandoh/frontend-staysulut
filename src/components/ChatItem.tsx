@@ -29,9 +29,9 @@ const ChatItem = ({
           <Image
             src={imgSrc}
             alt={name}
-            className="w-20 h-12 rounded-full object-cover"
-            width={48}
-            height={48}
+            className="w-10 h-auto rounded-full object-cover "
+            width={90}
+            height={90}
           />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">

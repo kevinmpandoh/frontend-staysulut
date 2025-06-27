@@ -2,6 +2,7 @@
 
 import { ShareModal } from "@/components/ShareModal";
 import { useIsWishlisted, useWishlist } from "@/hooks/useWishlist";
+import { useAuthStore } from "@/stores/auth.store";
 import { MapPin, Star, Share2, Heart } from "lucide-react";
 import { useState } from "react";
 // import { cn } from "@/lib/utils"; // opsional helper untuk className
@@ -26,6 +27,7 @@ export function KostInfo({
 }: KostInfoProps) {
   const [isShareOpen, setShareOpen] = useState(false);
   const { addToWishlist, removeFromWishlist, adding, removing } = useWishlist();
+  const { user } = useAuthStore();
   const { data: isWishlisted, isLoading: checkingWishlist } =
     useIsWishlisted(id);
   const toggleWishlist = () => {
@@ -61,17 +63,19 @@ export function KostInfo({
             >
               <Share2 className="w-6 h-6 text-muted-foreground" />
             </button>
-            <button
-              onClick={toggleWishlist}
-              className="p-2 rounded-full hover:bg-accent transition"
-              disabled={adding || removing || checkingWishlist}
-            >
-              <Heart
-                className={`w-6 h-6  ${
-                  isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
-                }`}
-              />
-            </button>
+            {user?.role !== "owner" && (
+              <button
+                onClick={toggleWishlist}
+                className="p-2 rounded-full hover:bg-accent transition"
+                disabled={adding || removing || checkingWishlist}
+              >
+                <Heart
+                  className={`w-6 h-6  ${
+                    isWishlisted ? "text-red-500 fill-red-500" : "text-gray-600"
+                  }`}
+                />
+              </button>
+            )}
           </div>
         </div>
 

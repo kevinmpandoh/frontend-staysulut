@@ -3,17 +3,40 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { billingService } from "@/services/billing.service";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-export const useBilling = (bookingId: string) => {
+type UseBillingProps = {
+  bookingId?: string;
+  invoice?: string;
+};
+
+export const useBilling = ({ bookingId, invoice }: UseBillingProps) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const { data: billings, isLoading: loadingBillings } = useQuery({
+    queryKey: ["billing"],
+    queryFn: () => billingService.getBillingByBooking(bookingId!),
+    enabled: !!bookingId,
+  });
+
+  const {
+    data: billing,
+    isLoading: loadingBilling,
+    error: errorBilling,
+  } = useQuery({
+    queryKey: ["billing-payment"],
+    queryFn: () => billingService.getBillingByInvoice(invoice!),
+    enabled: !!invoice,
+    retry: false,
+  });
 
   const {
     data: unpaidBilling,
-    isLoading: loadingBilling,
+    isLoading: loadingUnpaidBilling,
     error: billingError,
   } = useQuery({
     queryKey: ["billing", "unpaid"],
-    queryFn: () => billingService.getUnpaidBilling(bookingId),
+    queryFn: () => billingService.getUnpaidBilling(bookingId!),
     enabled: !!bookingId,
     retry: 1,
     refetchOnWindowFocus: false,
@@ -24,17 +47,26 @@ export const useBilling = (bookingId: string) => {
     isLoading: loadingPayment,
     refetch: refetchPayment,
   } = useQuery({
-    queryKey: ["billing", "payment", unpaidBilling?.id],
+    queryKey: ["billing", "payment"],
     queryFn: () =>
-      unpaidBilling
-        ? billingService.getBillingPayment(unpaidBilling.id)
+      billing
+        ? billingService.getBillingPayment(billing.id)
         : Promise.resolve(null),
-    enabled: !!unpaidBilling?.id && unpaidBilling?.hasPayment === true,
+    enabled: !!billing?.id && billing?.hasPayment === true,
   });
 
   const { mutate: confirmPayment, isPending: confirmingPayment } = useMutation({
     mutationFn: (billingId: string) => billingService.confirmPayment(billingId),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      const paymentStatus = response?.data?.transaction_status;
+      if (paymentStatus === "settlement" || paymentStatus === "success") {
+        toast.success("Pembayaran berhasil dikonfirmasi.");
+        router.replace("/user/pengajuan-sewa");
+      } else if (paymentStatus === "pending") {
+        toast.info("Pembayaran sedang diproses. Silakan cek kembali nanti.");
+      } else {
+        toast.error("Status pembayaran tidak valid atau gagal.");
+      }
       queryClient.invalidateQueries({ queryKey: ["billing", "unpaid"] });
       queryClient.invalidateQueries({
         queryKey: ["billing", "payment", unpaidBilling?.id],
@@ -108,8 +140,13 @@ export const useBilling = (bookingId: string) => {
   });
 
   return {
-    unpaidBilling,
+    billings,
+    loadingBillings,
+    errorBilling,
+    billing,
     loadingBilling,
+    unpaidBilling,
+    loadingUnpaidBilling,
     payment,
     loadingPayment,
     createPayment,

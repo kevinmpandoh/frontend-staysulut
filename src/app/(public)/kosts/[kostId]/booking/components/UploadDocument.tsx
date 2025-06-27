@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 // import { useUploadFile } from "@/hooks/useUploadFile";
 import { useState } from "react";
 
@@ -31,10 +32,12 @@ export default function UploadDocument({
     <div className="border-2 border-dashed w-[300px] border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-gray-400">
       <label className="cursor-pointer flex flex-col items-center">
         {preview ? (
-          <img
+          <Image
             src={preview}
             alt="Preview"
             className="w-32 h-32 object-cover rounded"
+            width={120}
+            height={120}
           />
         ) : (
           <>

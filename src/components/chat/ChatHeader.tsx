@@ -2,15 +2,16 @@
 import { X } from "lucide-react";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
+import { useChatPopupStore } from "@/stores/chatPopup.store";
 
 interface ChatHeaderProps {
   name: string;
   image: string;
-  onClose: () => void;
   isLoading: boolean;
 }
 
-const ChatHeader = ({ onClose, name, image, isLoading }: ChatHeaderProps) => {
+const ChatHeader = ({ name, image, isLoading }: ChatHeaderProps) => {
+  const { closePopup } = useChatPopupStore();
   if (isLoading) {
     return (
       <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
@@ -27,7 +28,7 @@ const ChatHeader = ({ onClose, name, image, isLoading }: ChatHeaderProps) => {
   }
   return (
     <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 mr-4">
         <Image
           src={image}
           alt="Portrait of a man with dark hair and blue shirt"
@@ -35,15 +36,20 @@ const ChatHeader = ({ onClose, name, image, isLoading }: ChatHeaderProps) => {
           width={40}
           height={40}
         />
-        <div>
-          <p className="font-semibold text-gray-900">{name}</p>
+        <div className="max-w-[280px]">
+          <p
+            className="font-semibold text-gray-900 truncate"
+            title={name} // Tooltip saat hover
+          >
+            {name}
+          </p>
           <p className="text-sm text-gray-400">Reply to message</p>
         </div>
       </div>
       <button
         aria-label="Close chat"
         className="text-gray-400 hover:text-gray-600 focus:outline-none"
-        onClick={onClose}
+        onClick={closePopup}
       >
         <X />
       </button>

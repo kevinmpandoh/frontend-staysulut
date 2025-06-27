@@ -8,7 +8,7 @@ export interface User {
   pekerjaan: string;
   kota_asal: string;
   kontak_darurat: string;
-  foto_profile: string;
+  foto_profile?: string;
   isVerified: boolean;
-  role: "penyewa" | "pemilik";
+  role: "tenant" | "owner" | "admin";
 }

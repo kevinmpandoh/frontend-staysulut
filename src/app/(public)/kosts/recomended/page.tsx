@@ -13,7 +13,7 @@ const dummyKosts = [...Array(9)].map((_, i) => ({
   type: "Campur",
   price: 120000,
   images: ["/kost.jpg", "/kost2.png"],
-  facilities: ["wifi", "dapur", "parkiran"],
+  facilities: ["WiFi", "Dapur Pribadi", "parkiran"],
 }));
 
 export default function RekomendasiKostPage() {

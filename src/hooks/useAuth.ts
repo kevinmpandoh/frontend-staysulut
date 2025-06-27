@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 export function useAuth() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const setUser = useAuthStore((state) => state.setUser);
+  const { setUser } = useAuthStore();
 
-  const loginMutation = useMutation({
+  const { mutate: login, isPending: isLogging } = useMutation({
     mutationFn: ({
       email,
       password,
@@ -24,7 +24,7 @@ export function useAuth() {
       queryClient.invalidateQueries({ queryKey: ["me"] });
 
       if (variables.role === "owner") {
-        router.push("/dashboard");
+        router.push("/dashboard/owner");
       } else {
         router.push("/");
       }
@@ -51,11 +51,13 @@ export function useAuth() {
     },
   });
 
-  const registerMutation = useMutation({
+  const { mutate: register, isPending: isRegsiter } = useMutation({
     mutationFn: (data: any) => AuthService.register(data),
-    onSuccess: () => router.push("/auth/register/verify"),
-    onError: (err: unknown) => {
-      throw err;
+    onSuccess: (res: any) => {
+      localStorage.setItem("otp_email", res.data.email);
+
+      // Redirect ke halaman OTP
+      router.push("/auth/register/verify");
     },
   });
 
@@ -97,9 +99,11 @@ export function useAuth() {
   });
 
   return {
-    login: loginMutation.mutate,
+    login,
+    isLogging,
     loginGoogle: googleLoginMutation.mutate,
-    register: registerMutation.mutate,
+    register,
+    isRegsiter,
     forgotPassword: forgotPasswordMutation.mutate,
     resetPassword: resetPasswordMutation.mutate,
     logout: logoutMutation.mutate,

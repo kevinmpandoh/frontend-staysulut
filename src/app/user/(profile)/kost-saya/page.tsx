@@ -1,20 +1,44 @@
 "use client";
 
 import { useBooking } from "@/hooks/useBooking";
-import { Clipboard, Clock, MapPin, MessageSquareText } from "lucide-react";
+import {
+  Clipboard,
+  Clock,
+  MapPin,
+  MessageSquareText,
+  Star,
+} from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useChat } from "@/hooks/useChat";
+import { ReviewModal } from "./ReviewModal";
+import { useReview } from "@/hooks/useReview";
 
 const KostSayaPage = () => {
+  const [showReviewModal, setShowReviewModal] = useState(false);
+
   const {
     activeBooking: data,
     loadingActive,
     checkOut,
     checkingOut,
   } = useBooking();
+
+  const { startChat } = useChat();
+  const { reviewKost } = useReview();
+
+  const handleReviewSubmit = (rating: number, review: string) => {
+    reviewKost({
+      bookingId: data.bookingId,
+      data: {
+        rating,
+        komentar: review,
+      },
+    });
+  };
 
   if (loadingActive) {
     return (
@@ -90,13 +114,27 @@ const KostSayaPage = () => {
         <hr className="my-8" />
       </div>
 
-      {data?.berhentiSewa && (
+      {data.reviewed && data.review && (
+        <div className="mt-4">
+          <p className="text-sm text-gray-600">
+            <strong>Rating:</strong> {data.review.rating} / 5
+          </p>
+          <p className="text-sm text-gray-600">
+            <strong>Ulasan:</strong> {data.review.ulasan}
+          </p>
+        </div>
+      )}
+
+      {data?.berhentiSewa && data?.berhentiSewa?.status !== "Ditolak" && (
         <div>
-          <h2>Status: {data.berhentiSewa.status}</h2>
-          <h3>tanggal Keluar: {data.berhentiSewa.stopDate}</h3>
-          <p>Alasan: {data.berhentiSewa.reason}</p>
-          {data.berhentiSewa.status === "Disetujui" && (
-            <Button disabled={checkingOut} onClick={handleCheckOut}>
+          <h2>Status: {data?.berhentiSewa.status}</h2>
+          <h3>tanggal Keluar: {data?.berhentiSewa.stopDate}</h3>
+          <p>Alasan: {data?.berhentiSewa.reason}</p>
+          {data?.berhentiSewa.status === "approved" && (
+            <Button
+              disabled={checkingOut || !data?.berhentiSewa.canCheckOut}
+              onClick={handleCheckOut}
+            >
               Check Out
             </Button>
           )}
@@ -109,7 +147,7 @@ const KostSayaPage = () => {
         </h3>
         <div className="flex flex-wrap gap-6">
           <Link
-            href={"/user/kost-saya/tagihan"}
+            href={`/user/kost-saya/${data.bookingId}/tagihan`}
             className="bg-white rounded-lg border shadow-md p-6 flex flex-col items-center justify-center w-30 h-30 text-gray-700 font-medium select-none hover:shadow-lg transition-all duration-200 ease-in-out hover:bg-blue-50 focus:outline-none"
             type="button"
           >
@@ -117,7 +155,7 @@ const KostSayaPage = () => {
             <span className="text-sm">Tagihan Kost</span>
           </Link>
           <Link
-            href={"/user/kost-saya/kontrak"}
+            href={`/user/kost-saya/${data.bookingId}/kontrak`}
             className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center w-32 h-32 text-gray-700 font-semibold select-none hover:shadow-lg transition-all duration-200 ease-in-out hover:bg-blue-50 focus:outline-none"
             type="button"
           >
@@ -127,12 +165,26 @@ const KostSayaPage = () => {
           <button
             className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center w-32 h-32 text-gray-700 font-semibold select-none hover:shadow-lg transition-all duration-200 ease-in-out hover:bg-blue-50 focus:outline-none"
             type="button"
+            onClick={() => startChat(data.kostTypeId)}
           >
             <MessageSquareText />
             Hubungi Pemilik
           </button>
+          <button
+            onClick={() => setShowReviewModal(true)}
+            className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center w-32 h-32 text-gray-700 font-semibold select-none hover:shadow-lg transition-all duration-200 ease-in-out hover:bg-blue-50 focus:outline-none"
+            type="button"
+          >
+            <Star />
+            Review Kost
+          </button>
         </div>
       </div>
+      <ReviewModal
+        open={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        onSubmit={handleReviewSubmit}
+      />
     </>
   );
 };

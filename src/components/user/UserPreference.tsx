@@ -12,6 +12,9 @@ export default function PreferensiPengguna() {
 
   if (isLoading) return <h1> Loading...</h1>;
 
+  if (!tenantPreference || tenantPreference.length === 0)
+    return <h1>Tidak Ada Preferensi</h1>;
+
   // Dummy data preferensi pengguna
   const preferensi = {
     lokasi: "Jakarta Selatan",

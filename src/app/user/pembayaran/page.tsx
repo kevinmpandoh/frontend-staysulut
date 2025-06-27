@@ -4,9 +4,8 @@ import React, { useEffect, useState } from "react";
 
 import { useBilling } from "@/hooks/useBilling";
 import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
-import { isAxiosErrorWithStatus } from "@/utils/isAxiosErrorWithStatus";
-import { PAYMENT_METHOD } from "@/contstans/paymentMethod";
+import { notFound, useSearchParams } from "next/navigation";
+import { PAYMENT_METHOD } from "@/constants/paymentMethod";
 import { PaymentMethodDialog } from "@/components/Modal/PaymentMethodModal";
 import { PaymentMethodSelector } from "@/components/payment/PaymentMethodSelector";
 import { InvoiceSection } from "@/components/payment/InvoiceSection";
@@ -14,6 +13,9 @@ import { PaymentCTA } from "@/components/payment/PaymentCTA";
 import { PaymentInstruction } from "@/components/payment/PaymentInstruction";
 import { CountdownTimer } from "@/components/payment/CountdownTimer";
 import { PaymentSummary } from "@/components/payment/PaymentSummary";
+import { usePayment } from "@/hooks/usePayment";
+import { APIError } from "@/utils/handleAxiosError";
+import ErrorDisplay from "@/components/errors/ErrorDisplay";
 
 // === Countdown Hook ===
 function useCountdown(expiredAt: string | null) {
@@ -66,35 +68,44 @@ const PaymentTenant = () => {
   } | null>(null);
 
   const searchParams = useSearchParams();
-  const bookingId = searchParams.get("bookingId") ?? "";
+  const invoice = searchParams.get("invoice") ?? "";
+
+  const { billing, loadingBilling, errorBilling } = useBilling({ invoice });
+
+  console.log(billing, "BILLING");
 
   const {
-    unpaidBilling,
-    loadingBilling,
     payment,
     loadingPayment,
     createPayment,
     creatingPayment,
+    changeMethod,
+    changingMethod,
     confirmPayment,
     confirmingPayment,
-    billingError,
-    changeMethod,
-  } = useBilling(bookingId);
+  } = usePayment({ billingId: billing?.id, hasPayment: billing?.hasPayment });
 
   const timeLeft = useCountdown(payment?.expiry_time ?? null);
+  const sudahBayar =
+    billing?.status === "paid" || payment?.status === "success";
 
-  if (isAxiosErrorWithStatus(billingError, 404)) {
+  if (errorBilling instanceof APIError) {
+    if (errorBilling.status === 404) {
+      return <ErrorDisplay status={404} message="Tagihan tidak ditemukan." />;
+    }
     return (
-      <p className="text-center text-red-500">Tagihan tidak ditemukan (404).</p>
-      // atau <NotFoundPage />
+      <ErrorDisplay
+        status={errorBilling.status}
+        message={errorBilling.message}
+      />
     );
   }
 
-  if (!bookingId) {
-    return <p className="text-red-500">Booking ID tidak ditemukan di URL.</p>;
+  if (!invoice) {
+    notFound();
   }
 
-  if (loadingBilling || loadingPayment)
+  if (loadingBilling || !billing || loadingPayment || changingMethod)
     return (
       <div className="flex justify-center items-center h-96">
         {/* <Spinner /> Komponen loading animasi */}
@@ -102,10 +113,20 @@ const PaymentTenant = () => {
       </div>
     );
 
-  if (!unpaidBilling) return <p>Tidak ada tagihan yang belum dibayar.</p>;
+  if (sudahBayar) {
+    return (
+      <main className="flex w-full items-center justify-center h-[70vh] px-4">
+        <div className="max-w-md w-full bg-green-100 border border-green-400 text-green-800 rounded-lg p-6 text-center shadow">
+          <h2 className="text-2xl font-bold mb-2">Pembayaran Berhasil ✅</h2>
+          <p className="text-sm">Tagihan ini telah dibayar. Terima kasih!</p>
+        </div>
+      </main>
+    );
+  }
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
   const handleConfirmMethod = () => {
     if (!selectedTemp) {
       toast.error("Pilih metode pembayaran terlebih dahulu.");
@@ -114,7 +135,7 @@ const PaymentTenant = () => {
 
     if (payment) {
       changeMethod({
-        billingId: unpaidBilling.id,
+        paymentId: payment.id,
         provider: selectedTemp.value,
       });
       // setSelectedTemp(null);
@@ -131,29 +152,20 @@ const PaymentTenant = () => {
       toast.error("Silakan pilih metode pembayaran terlebih dahulu.");
       return;
     }
-    if (unpaidBilling && confirmedMethod) {
+    if (billing && confirmedMethod) {
       createPayment({
-        billingId: unpaidBilling.id,
+        billingId: billing.id,
         provider: confirmedMethod.value,
       });
     }
   };
 
   const handleConfirm = () => {
-    if (!unpaidBilling) {
-      toast.error("Tidak ada tagihan yang bisa dikonfirmasi.");
+    if (!payment) {
+      toast.error("Tidak ada Pembayaran yang bisa dikonfirmasi.");
       return;
     }
-    confirmPayment(unpaidBilling.id, {
-      onSuccess: () => {
-        toast.success("Pembayaran berhasil dikonfirmasi.");
-      },
-      onError: (error: any) => {
-        toast.error(
-          error?.response?.data?.message || "Gagal mengonfirmasi pembayaran."
-        );
-      },
-    });
+    confirmPayment(payment.id);
   };
 
   return (
@@ -174,6 +186,12 @@ const PaymentTenant = () => {
             Pembayaran
           </h1>
 
+          {(billing.status === "paid" || payment?.status === "success") && (
+            <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-md mb-6">
+              Tagihan sudah dibayar.
+            </div>
+          )}
+
           {timeLeft && payment && (
             <CountdownTimer
               timeLeft={timeLeft}
@@ -181,8 +199,8 @@ const PaymentTenant = () => {
             />
           )}
 
-          <InvoiceSection invoice={unpaidBilling.invoice} />
-          {!payment ? (
+          <InvoiceSection invoice={billing?.invoice} />
+          {!payment && !sudahBayar ? (
             <>
               <PaymentMethodSelector
                 confirmedMethod={confirmedMethod}
@@ -195,7 +213,7 @@ const PaymentTenant = () => {
                 confirmedMethod={confirmedMethod}
               />
             </>
-          ) : (
+          ) : payment && !sudahBayar ? (
             <>
               <PaymentInstruction payment={payment} />
 
@@ -209,18 +227,18 @@ const PaymentTenant = () => {
                 </button>
                 <button
                   onClick={handleConfirm}
-                  disabled={confirmingPayment || !unpaidBilling}
+                  disabled={confirmingPayment || !billing}
                   className="flex-1 bg-blue-600 text-white font-semibold rounded-md py-2 hover:bg-blue-700 transition"
                 >
                   {confirmingPayment ? "Memproses..." : "Saya sudah bayar"}
                 </button>
               </div>
             </>
-          )}
+          ) : null}
         </section>
 
         {/* Right Section */}
-        <PaymentSummary unpaidBilling={unpaidBilling} />
+        <PaymentSummary billing={billing} />
       </main>
 
       {/* Modal */}

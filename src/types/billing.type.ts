@@ -14,6 +14,7 @@ export type Billing = {
 };
 
 export type Payment = {
+  id: string;
   amount: number;
   status: "pending" | "success" | "failed" | "expired";
   payment_method: string;

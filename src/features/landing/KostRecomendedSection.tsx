@@ -90,7 +90,7 @@ const KostRecomendedSection = () => {
                 type={kost.jenis_kost}
                 price={kost.price}
                 images={kost.photos}
-                facilities={["wifi", "dapur", "parkiran"]}
+                facilities={kost.fasilitas}
               />
             </div>
           ))}

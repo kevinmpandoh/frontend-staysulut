@@ -9,8 +9,12 @@ const Footer = () => {
         {/* Logo & Deskripsi */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <Image src="/logo.svg" alt="Kostku Logo" width={32} height={32} />
-            <span className="text-xl font-semibold">Kostku</span>
+            <Image
+              src="/logos/Logo-Stay-Kost-Dark.svg"
+              alt="Kostku Logo"
+              width={100}
+              height={100}
+            />
           </div>
           <p className="text-sm text-gray-400">
             Platform terbaik untuk mencari dan mengelola kost di Sulawesi Utara.
@@ -60,11 +64,11 @@ const Footer = () => {
             </li>
             <li className="flex items-center gap-2">
               <Phone size={16} />
-              0812-3456-7890
+              089510465800
             </li>
             <li className="flex items-center gap-2">
               <Mail size={16} />
-              support@kostku.com
+              kevinmpandoh@gmail.com
             </li>
             <li className="flex gap-3 mt-2">
               <a href="#">
@@ -80,7 +84,7 @@ const Footer = () => {
 
       {/* Footer bawah */}
       <div className="mt-12 border-t border-gray-700 pt-6 text-sm text-gray-500 text-center">
-        © {new Date().getFullYear()} Kostku. All rights reserved.
+        © {new Date().getFullYear()} Stay Kost. All rights reserved.
       </div>
     </footer>
   );

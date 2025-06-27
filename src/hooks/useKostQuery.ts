@@ -24,11 +24,10 @@ export const useKostRecomended = () => {
   return useQuery({
     queryKey: ["kosts", "recomended"],
     queryFn: async () => {
-      if (!user) {
-        // Belum login → ambil semua kost
+      if (!user || user.role !== "tenant") {
+        // Belum login atau bukan tenant → ambil semua kost
         return KostService.getKostList({});
       }
-
       // Sudah login → cek preferensi
       const preferences = await preferenceService.getPreference();
       if (preferences) {
@@ -43,7 +42,18 @@ export const useKostRecomended = () => {
 export function useKostDetail(id: string) {
   return useQuery({
     queryKey: ["kost", id],
-    queryFn: () => KostService.getKostDetail(id).then((res) => res.data.data),
+    queryFn: async () => {
+      try {
+        const res = await KostService.getKostTypeDetail(id);
+        return res.data.data;
+      } catch (error: any) {
+        // Melempar error agar bisa ditangkap di komponen
+        throw {
+          status: error.response?.status,
+          message: error.response?.data?.message || "Terjadi kesalahan",
+        };
+      }
+    },
     enabled: !!id,
   });
 }

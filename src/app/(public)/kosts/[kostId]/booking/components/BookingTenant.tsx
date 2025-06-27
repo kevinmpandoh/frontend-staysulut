@@ -6,6 +6,9 @@ import { useState } from "react";
 import BookingForm from "./BookingForm";
 import BookingSidebar from "./BookingSidebar";
 import BookingSuccess from "./BookingSuccess";
+import { useKostDetail } from "@/hooks/useKostQuery";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface BookingTenantProps {
   kostId: string;
@@ -13,6 +16,18 @@ interface BookingTenantProps {
 
 export default function BookingTenant({ kostId }: BookingTenantProps) {
   const [success, setSuccess] = useState(false);
+
+  const { data: kost, isLoading, isError, error } = useKostDetail(kostId);
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (isError || !kost) {
+    if ((error as any)?.status === 404) {
+      return <div>Kost tidak ditemukan atau sudah dihapus.</div>;
+    }
+
+    return <div>Gagal memuat detail kost. Silakan coba lagi nanti.</div>;
+  }
 
   return (
     <>
@@ -22,12 +37,12 @@ export default function BookingTenant({ kostId }: BookingTenantProps) {
         <>
           {/* Kiri - Form */}
           <div className="flex-1 space-y-6 mr-8">
-            <a
-              href={`/kost/${kostId}`}
-              className="text-blue-600 hover:underline"
+            <Link
+              href={`/kosts/${kostId}`}
+              className="text-blue-600 hover:underline flex items-center mb-4 gap-2"
             >
-              ← Kembali ke Detail Kost
-            </a>
+              <ArrowLeft /> <span>Kembali ke Detail Kost</span>
+            </Link>
 
             <BookingForm kostId={kostId} onSuccess={() => setSuccess(true)} />
           </div>
@@ -36,10 +51,11 @@ export default function BookingTenant({ kostId }: BookingTenantProps) {
           <div className="w-full md:w-1/3">
             <BookingSidebar
               kost={{
-                name: "Kost Vinshi",
-                address: "Kembangan, Jakarta Barat",
-                image: "/path/image.jpg",
-                price: 700000,
+                name: kost?.nama_kost,
+                type: kost?.jenis_kost,
+                address: `${kost?.alamat.kecamatan}, ${kost?.alamat.kabupaten_kota}`,
+                image: kost?.photos[0]?.url,
+                price: kost.price,
               }}
             />
           </div>

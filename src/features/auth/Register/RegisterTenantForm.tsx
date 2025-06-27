@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { authValidation } from "@/validation/auth.validation";
 import "keen-slider/keen-slider.min.css";
@@ -37,7 +36,6 @@ const RegisterTenantForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register: registerTenant } = useAuth(); // Hook untuk registrasi
-  const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
@@ -72,9 +70,6 @@ const RegisterTenantForm = () => {
       await registerTenant(data);
 
       localStorage.setItem("otp_email", data.email);
-
-      // Redirect ke halaman OTP
-      router.push("/auth/register/verify");
     } catch (error) {
       if (error instanceof AxiosError) {
         const errorMessage =

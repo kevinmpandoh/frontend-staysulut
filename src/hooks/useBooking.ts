@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import { bookingService } from "@/services/booking.service";
+import { toast } from "sonner";
 
 export const useBooking = () => {
   const router = useRouter();
@@ -22,7 +23,7 @@ export const useBooking = () => {
 
   // Booking History (khusus status selesai)
   const { data: bookingHistory, isLoading: loadingHistory } = useQuery({
-    queryKey: ["booking", "Selesai"],
+    queryKey: ["booking-selsai"],
     queryFn: bookingService.getTenantBookingHistory,
   });
 
@@ -38,6 +39,12 @@ export const useBooking = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["booking"] }); // Refresh booking list
       router.push("/user/kost-saya");
+    },
+    onError: (err: any) => {
+      console.log(err);
+      toast.error(
+        err.response.data.message || "Terjadi kesalahan. Silahakn coba lagi"
+      );
     },
   });
   const { mutate: checkOut, isPending: checkingOut } = useMutation({

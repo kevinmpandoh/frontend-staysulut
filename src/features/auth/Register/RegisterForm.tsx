@@ -6,16 +6,21 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { AxiosError } from "axios";
 import { authValidation } from "@/validation/auth.validation";
+
+interface FormValues {
+  name: string;
+  phone: string; // ktp boleh null
+  email: string; // ktp boleh null
+  password: string;
+  confirmPassword: string; // bukan opsional lagi
+}
 
 const RegisterForm = () => {
   const [role, setRole] = useState<"tenant" | "owner">("tenant");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { register: registerUser } = useAuth(); // Hook untuk registrasi
-  const router = useRouter();
+  const { register: registerUser, isRegsiter } = useAuth(); // Hook untuk registrasi
 
   // ✅ React Hook Form dengan Yup
   const {
@@ -23,30 +28,34 @@ const RegisterForm = () => {
     handleSubmit,
     formState: { errors },
     setError, // ✅ Tambahkan setError
-  } = useForm({
+  } = useForm<FormValues>({
     resolver: yupResolver(authValidation.registerSchema),
     mode: "onChange",
   });
 
   // ✅ Fungsi Submit
   const onSubmit = async (data: any) => {
-    try {
-      await registerUser({ ...data, role });
-
-      localStorage.setItem("otp_email", data.email);
-
-      // Redirect ke halaman OTP
-      router.push("/auth/register/verify");
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(error.response?.status);
-        const errorMessage =
-          error.response?.data?.errors.email || "Terjadi kesalahan, coba lagi.";
-        setError("email", { type: "manual", message: errorMessage });
-      } else {
-        console.error("Error:", error);
+    await registerUser(
+      { ...data, role },
+      {
+        onError: (error: any) => {
+          if (error.details && typeof error.details === "object") {
+            Object.entries(error.details).forEach(([field, message]) => {
+              setError(field as keyof FormValues, {
+                type: "manual",
+                message: message as string,
+              });
+            });
+          } else {
+            // fallback jika error tidak punya details (misalnya error umum)
+            setError("root", {
+              type: "manual",
+              message: error.message || "Terjadi kesalahan",
+            });
+          }
+        },
       }
-    }
+    );
   };
 
   return (
@@ -172,7 +181,10 @@ const RegisterForm = () => {
                   </p>
                 )}
               </div>
-              <button className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition duration-300">
+              <button
+                disabled={isRegsiter}
+                className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition duration-300"
+              >
                 Daftar
               </button>
             </form>

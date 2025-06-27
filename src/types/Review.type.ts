@@ -1,7 +1,7 @@
 export interface Review {
   id: string;
   name: string;
-  avatarUrl?: string;
+  avatar?: string;
   rating: number; // 1-5
   message: string;
   createdAt: string; // ISO date

@@ -1,25 +1,5 @@
-import {
-  Wifi,
-  Snowflake,
-  ShowerHead,
-  BedSingle,
-  ParkingSquare,
-  LayoutPanelTop,
-  Users,
-  CheckCircle,
-} from "lucide-react";
-import { JSX } from "react";
 import { SectionTitle } from "./SectionTitle";
-
-const iconMap: Record<string, JSX.Element> = {
-  WiFi: <Wifi className="w-5 h-5 text-primary" />,
-  AC: <Snowflake className="w-5 h-5 text-primary" />,
-  "Private Bathroom": <ShowerHead className="w-5 h-5 text-primary" />,
-  Mattress: <BedSingle className="w-5 h-5 text-primary" />,
-  Desk: <LayoutPanelTop className="w-5 h-5 text-primary" />,
-  "Motorcycle Parking": <ParkingSquare className="w-5 h-5 text-primary" />,
-  "Shared Kitchen": <Users className="w-5 h-5 text-primary" />,
-};
+import { FACILITY_ICONS, DEFAULT_FACILITY_ICON } from "@/constants/facilities";
 
 interface KostFacilitiesProps {
   roomFacilities: string[];
@@ -32,15 +12,20 @@ export function KostFacilities({
 }: KostFacilitiesProps) {
   const renderFacilities = (list: string[]) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 my-4">
-      {list.map((item, index) => (
-        <div
-          key={index}
-          className="flex items-center gap-2 text-md font-semibold text-slate-600"
-        >
-          {iconMap[item] || <CheckCircle className="w-5 h-5 text-primary" />}
-          <span>{item}</span>
-        </div>
-      ))}
+      {list.map((key, index) => {
+        const facility = FACILITY_ICONS[key];
+        const Icon = facility?.icon || DEFAULT_FACILITY_ICON;
+        const label = facility?.label || key;
+        return (
+          <div
+            key={index}
+            className="flex items-center gap-2 text-md font-semibold text-slate-600"
+          >
+            <Icon className="w-5 h-5 text-primary" />
+            <span>{label}</span>
+          </div>
+        );
+      })}
     </div>
   );
 

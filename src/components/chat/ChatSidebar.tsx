@@ -1,5 +1,7 @@
 "use client";
+import { useChatPopupStore } from "@/stores/chatPopup.store";
 import ChatItem from "../ChatItem";
+import { User } from "@/types/user.type";
 
 interface ChatSidebarProps {
   chats: {
@@ -8,15 +10,25 @@ interface ChatSidebarProps {
       namaKost: string;
       fotoKost: string;
     };
+    sender: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
     last_message: string;
     last_message_at: string;
     unread_messages: number;
   }[];
-  onSelect: (chatId: string) => void;
   selectedChatId: string | null;
+  user: User;
 }
 
-const ChatSidebar = ({ chats, onSelect, selectedChatId }: ChatSidebarProps) => {
+const ChatSidebar = ({ chats, selectedChatId, user }: ChatSidebarProps) => {
+  const { setSelectedChatId } = useChatPopupStore();
+  const handleSelect = (chatId: string) => {
+    setSelectedChatId(chatId);
+  };
+
   if (!chats || chats.length === 0) {
     return (
       <div className="w-72 border-r border-gray-200 flex flex-col">
@@ -62,47 +74,22 @@ const ChatSidebar = ({ chats, onSelect, selectedChatId }: ChatSidebarProps) => {
         {chats.map((chat) => (
           <ChatItem
             key={chat.id}
-            imgSrc={chat.kost.fotoKost || "https://placehold.co/40x40?text=?"}
-            name={chat.kost.namaKost}
+            // imgSrc={chat.kost.fotoKost || "https://placehold.co/40x40?text=?"}
+            // name={chat.kost.namaKost}
+            imgSrc={
+              user.role === "tenant"
+                ? chat.kost.fotoKost
+                : chat.sender.avatar || "/profile-default.png"
+            }
+            name={
+              user.role === "tenant" ? chat.kost.namaKost : chat.sender.name
+            }
             message={chat.last_message}
-            onClick={() => onSelect(chat.id)}
+            onClick={() => handleSelect(chat.id)}
             active={chat.id === selectedChatId}
             unreadCount={chat.unread_messages || 0}
           />
         ))}
-        {/* <ChatItem
-          imgSrc="https://placehold.co/40x40/png?text=Devid"
-          altText="Portrait of Devid"
-          name="Devid Heilo"
-          message="I cam across your and..."
-        />
-        <ChatItem
-          imgSrc="https://placehold.co/40x40/png?text=Henry"
-          altText="Portrait of Henry"
-          name="Henry Fisher"
-          message="I like your confidence 💪"
-          active
-        />
-        <ChatItem
-          imgSrc="https://placehold.co/40x40/png?text=Wilium"
-          altText="Portrait of Wilium"
-          name="Wilium Smith"
-          message="Can you share your offer?"
-          status="green"
-        />
-        <ChatItem
-          imgSrc="https://placehold.co/40x40/png?text=Henry+Deco"
-          altText="Portrait of Henry Deco"
-          name="Henry Deco"
-          message="I'm waiting for your response!"
-          status="red"
-        />
-        <ChatItem
-          imgSrc="https://placehold.co/40x40/png?text=Jubin"
-          altText="Portrait of Jubin"
-          name="Jubin Jack"
-          message="I'm waiting for your response!"
-        /> */}
       </div>
     </div>
   );

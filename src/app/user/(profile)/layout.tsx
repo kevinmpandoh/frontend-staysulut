@@ -15,7 +15,7 @@ export default async function ProfileLayout({
   return (
     <>
       <SidebarUser />
-      <section className="bg-white w-full rounded-lg border min-h-[556px] border-gray-200 p-8">
+      <section className="bg-white w-full rounded-lg border min-h-[556px] border-gray-200 px-10 py-8">
         {children}
       </section>
     </>

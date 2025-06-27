@@ -18,19 +18,22 @@ const RentalRequestList = () => {
 
   return (
     <>
-      {booking.map((item: any) => (
+      {booking?.map((item: any) => (
         <RentalRequestCard
-          key={item.id}
-          id={item.id}
-          date={item.tanggalDiajukan}
-          status={item.status}
-          kostName={item.namaKost}
-          address={item.alamat}
-          category={item.jenisKost}
-          checkInDate={item.tanggalMasuk}
-          duration={item.durasi}
-          imageUrl={item.fotoKamar}
-          price={item.harga}
+          key={item?.id}
+          id={item?.id}
+          date={item?.tanggalDiajukan}
+          status={item?.status}
+          kostName={item?.namaKost}
+          address={item?.alamat}
+          category={item?.jenisKost}
+          checkInDate={item?.tanggalMasuk}
+          duration={item?.durasi}
+          imageUrl={item?.fotoKamar}
+          price={item?.harga}
+          expireDate={item?.expireDate}
+          invoice={item?.invoice}
+          reason={item?.rejectReason}
         />
       ))}
     </>

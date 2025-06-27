@@ -3,12 +3,19 @@ import { MapPin } from "lucide-react";
 import Image from "next/image";
 
 // components/payment/PaymentSummary.tsx
-export function PaymentSummary({ unpaidBilling }: { unpaidBilling: Billing }) {
+export function PaymentSummary({ billing }: { billing: Billing }) {
+  if (!billing || billing.total == null) {
+    return (
+      <div className="p-4 text-sm text-red-500">
+        Data tagihan tidak lengkap.
+      </div>
+    );
+  }
   return (
     <aside className="flex-1 max-w-md border border-gray-200 rounded-lg p-6 select-text">
       <div className="flex gap-4 mb-6">
         <Image
-          src={unpaidBilling.fotoKamar}
+          src={billing?.fotoKamar}
           alt="Room with a bed, white sheets, purple pillows, yellow curtain, and wooden wardrobe"
           className="w-30 h-22 rounded-md object-cover"
           width={120}
@@ -19,11 +26,11 @@ export function PaymentSummary({ unpaidBilling }: { unpaidBilling: Billing }) {
             Kost Campur
           </span>
           <h3 className="font-bold text-base leading-tight select-text">
-            {unpaidBilling.namaKost}
+            {billing?.namaKost}
           </h3>
           <p className="text-sm font-semibold text-gray-700 flex items-center gap-1 select-text">
             <MapPin size={18} />
-            {unpaidBilling.alamat}
+            {billing?.alamat}
           </p>
         </div>
       </div>
@@ -33,15 +40,15 @@ export function PaymentSummary({ unpaidBilling }: { unpaidBilling: Billing }) {
       <dl className="mb-6 text-gray-900 text-sm space-y-3">
         <div className="flex justify-between">
           <dt>Tanggal Masuk</dt>
-          <dd>{unpaidBilling.tanggalMasuk}</dd>
+          <dd>{billing?.tanggalMasuk}</dd>
         </div>
         <div className="flex justify-between">
           <dt>Tanggal Selesai</dt>
-          <dd>{unpaidBilling.tanggalKeluar}</dd>
+          <dd>{billing?.tanggalKeluar}</dd>
         </div>
         <div className="flex justify-between">
           <dt>Durasi Sewa</dt>
-          <dd>{unpaidBilling.durasi} bulan</dd>
+          <dd>{billing?.durasi} bulan</dd>
         </div>
       </dl>
 
@@ -53,7 +60,7 @@ export function PaymentSummary({ unpaidBilling }: { unpaidBilling: Billing }) {
         <div className="flex justify-between">
           <dt>Biaya sewa per bulan</dt>
           <dd className="font-semibold">
-            Rp {unpaidBilling.total.toLocaleString("id-ID")}
+            Rp {billing?.total.toLocaleString("id-ID")}
           </dd>
         </div>
         <div className="flex justify-between">
@@ -67,7 +74,7 @@ export function PaymentSummary({ unpaidBilling }: { unpaidBilling: Billing }) {
       <div className="flex justify-between text-gray-700 text-lg font-extrabold select-text">
         <span>Total Pembayaran</span>
         <span className="text-indigo-600">
-          Rp {unpaidBilling.total.toLocaleString("id-ID")}
+          Rp {billing?.total.toLocaleString("id-ID")}
         </span>
       </div>
     </aside>

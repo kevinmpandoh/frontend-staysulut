@@ -21,13 +21,13 @@ export default function BookingSuccess() {
         sekarang
       </p>
       <Link
-        href="/user/pengajuan-kost"
+        href="/user/pengajuan-sewa"
         className="block bg-primary text-white py-2 px-4 rounded mb-2"
       >
         Lihat Status Pengajuan
       </Link>
       <Link
-        href="/kost"
+        href="/kosts"
         className="block border border-primary text-primary py-2 px-4 rounded"
       >
         Lihat Kost yang Lain

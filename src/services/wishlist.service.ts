@@ -2,7 +2,6 @@
 import api from "@/lib/axios";
 
 export const addToWishlist = async (kostId: string) => {
-  console.log(kostId, "KOSTT");
   const res = await api.post(`/tenant/wishlist`, { kost_type: kostId });
   return res.data;
 };
