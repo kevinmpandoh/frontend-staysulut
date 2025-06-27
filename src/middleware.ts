@@ -20,6 +20,8 @@ export async function middleware(request: NextRequest) {
   const isAuth = !!token;
   const { pathname } = request.nextUrl;
 
+  console.log(token, isAuth, "TESMIDDLEWARE");
+
   if (!isAuth && pathname.startsWith("/preferences")) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
