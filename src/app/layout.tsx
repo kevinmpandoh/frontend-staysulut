@@ -8,7 +8,7 @@ import Providers from "./providers";
 import { Toaster } from "@/components/ui/sonner";
 import LoginModal from "@/components/LoginModal";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { SidebarProvider } from "@/contexts/SidebarContext";
+// import { SidebarProvider } from "@/contexts/SidebarContext";
 import { Suspense } from "react";
 
 const geistSans = Geist({
@@ -52,9 +52,7 @@ export default async function RootLayout({
       >
         <Providers>
           <AuthProvider>
-            <SidebarProvider>
-              <Suspense>{children}</Suspense>
-            </SidebarProvider>
+            <Suspense>{children}</Suspense>
           </AuthProvider>
         </Providers>
         <Toaster richColors position={"top-center"} />

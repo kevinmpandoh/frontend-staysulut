@@ -26,7 +26,7 @@ export default function Home() {
       <div className="bg-gray-50 ">
         {/* <Navbar /> */}
 
-        <AnimateSection id="hero">
+        <AnimateSection id="hero" forceAnimate>
           <HeroSection />
         </AnimateSection>
 

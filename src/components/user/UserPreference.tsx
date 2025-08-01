@@ -1,101 +1,194 @@
 "use client";
 
-import { usePreferenceModalStore } from "@/stores/preferenceModal.store";
-import EditPreferenceModal from "./EdiPreferenceModal";
-import { Pencil } from "lucide-react";
-import { usePreference } from "@/hooks/usePreference";
+import { useEffect, useState } from "react";
+
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "sonner";
+import { getFacilities } from "@/services/facilities.service";
+
+import { preferenceService } from "@/services/preference.service";
+import LocationPicker from "../common/LocationPicker";
+import ExpandableCheckboxList from "../common/ExpandableCheckboxList";
+
+// const fasilitasOptions = ["WiFi", "Parkir", "Dapur", "AC", "Kamar Mandi Dalam"];
+const keamananOptions = ["CCTV", "Keamanan 24 Jam", "Akses Fingerprint"];
 
 export default function PreferensiPengguna() {
-  const { openModal } = usePreferenceModalStore();
+  const { data, isLoading } = useQuery({
+    queryKey: ["userPreference"],
+    queryFn: preferenceService.getPreference,
+  });
+  const { data: fasilitas } = useQuery({
+    queryKey: ["facilities"],
+    queryFn: getFacilities,
+  });
 
-  const { tenantPreference, isLoading } = usePreference();
+  // console.log(fasilitas?.map((f: any) => f.nama_fasilitas));
 
-  if (isLoading) return <h1> Loading...</h1>;
+  const fasilitasOptions = fasilitas?.map((f: any) => f.nama_fasilitas);
+  console.log(fasilitasOptions);
 
-  if (!tenantPreference || tenantPreference.length === 0)
-    return <h1>Tidak Ada Preferensi</h1>;
+  const [form, setForm] = useState({
+    price: { min: 0, max: 0 },
+    fasilitasKost: [] as string[],
+    fasilitasKamar: [] as string[],
+    jenis_kost: "",
+    keamanan: [] as string[],
+    lokasi: {
+      koordinat: { lat: -6.1751, lng: 106.865 },
+    },
+  });
 
-  // Dummy data preferensi pengguna
-  const preferensi = {
-    lokasi: "Jakarta Selatan",
-    jenisKost: "Putri",
-    harga: "Rp1.000.000",
-    fasilitas: ["WiFi", "AC", "Kamar Mandi Dalam"],
-    keamanan: ["CCTV", "Security 24 Jam"],
+  const { mutate, isPending: isSubmitting } = useMutation({
+    mutationFn: preferenceService.createOrUpdatePreference,
+    onSuccess: () => toast.success("Preferensi berhasil disimpan!"),
+    onError: () => toast.error("Gagal menyimpan preferensi."),
+  });
+
+  useEffect(() => {
+    if (data) {
+      setForm({
+        price: data.harga,
+        fasilitasKost: data.fasilitasKost || [],
+        fasilitasKamar: data.fasilitasKamar || [],
+        jenis_kost: data.jenis_kost,
+        keamanan: data.keamanan || [],
+        lokasi: data.lokasi || { koordinat: { lat: -6.1751, lng: 106.865 } },
+      });
+    }
+  }, [data]);
+
+  const handleCheckboxChange = (
+    key: "fasilitasKost" | "fasilitasKamar" | "keamanan",
+    value: string
+  ) => {
+    setForm((prev) => {
+      const selected = prev[key].includes(value)
+        ? prev[key].filter((v) => v !== value)
+        : [...prev[key], value];
+      return { ...prev, [key]: selected };
+    });
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === "min" || name === "max") {
+      setForm((prev) => ({
+        ...prev,
+        price: {
+          ...prev.price,
+          [name]: Number(value),
+        },
+      }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutate(form);
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+
   return (
-    <div className="mx-auto space-y-6">
-      <div className="flex justify-between items-center border-b pb-2">
-        <h2 className="text-lg font-semibold">Lokasi Preferensi</h2>
-
-        <button
-          onClick={() => openModal("lokasi")}
-          className="bg-[#E0E7FF] rounded-full p-2 hover:bg-[#C7D2FE] transition"
-        >
-          <Pencil size={18} className="text-[#4338CA]" />
-        </button>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <h3 className="font-semibold mb-2">Range Harga</h3>
+        <div className="flex gap-4">
+          <Input
+            type="number"
+            name="min"
+            value={form.price.min}
+            onChange={handleChange}
+            placeholder="Min"
+          />
+          <Input
+            type="number"
+            name="max"
+            value={form.price.max}
+            onChange={handleChange}
+            placeholder="Max"
+          />
+        </div>
       </div>
-      <p>{preferensi.lokasi}</p>
 
-      <div className="flex justify-between items-center border-b pb-2 pt-4">
-        <h2 className="text-lg font-semibold">Harga</h2>
-
-        <button
-          onClick={() => openModal("harga")}
-          className="bg-[#E0E7FF] rounded-full p-2 hover:bg-[#C7D2FE] transition"
+      <div>
+        <h3 className="font-semibold mb-2">Jenis Kost</h3>
+        <RadioGroup
+          value={form.jenis_kost}
+          onValueChange={(value) =>
+            setForm((prev) => ({ ...prev, jenis_kost: value }))
+          }
         >
-          <Pencil size={18} className="text-[#4338CA]" />
-        </button>
+          <div className="flex gap-4">
+            {["Putra", "Putri", "Campur"].map((jenis) => (
+              <Label key={jenis} className="flex items-center gap-2">
+                <RadioGroupItem value={jenis} id={jenis} />
+                {jenis}
+              </Label>
+            ))}
+          </div>
+        </RadioGroup>
       </div>
-      <p>Rp {tenantPreference.harga.toLocaleString("id-ID")}</p>
 
-      <div className="flex justify-between items-center border-b pb-2 pt-4">
-        <h2 className="text-lg font-semibold">Jenis Kost</h2>
-
-        <button
-          onClick={() => openModal("jenis_kost")}
-          className="bg-[#E0E7FF] rounded-full p-2 hover:bg-[#C7D2FE] transition"
-        >
-          <Pencil size={18} className="text-[#4338CA]" />
-        </button>
+      <div>
+        {/* <h3 className="font-semibold mb-2">Fasilitas Kost</h3> */}
+        {/* <div className="grid grid-cols-4 gap-2"> */}
+        <ExpandableCheckboxList
+          label="Fasilitas Kost"
+          options={fasilitasOptions}
+          selected={form.fasilitasKost}
+          onChange={(value) => handleCheckboxChange("fasilitasKost", value)}
+          initialVisibleCount={8}
+        />
+        {/* </div> */}
       </div>
-      <p>{preferensi.jenisKost}</p>
 
-      <div className="flex justify-between items-center border-b pb-2 pt-4">
-        <h2 className="text-lg font-semibold">Fasilitas</h2>
-
-        <button
-          onClick={() => openModal("fasilitas")}
-          className="bg-[#E0E7FF] rounded-full p-2 hover:bg-[#C7D2FE] transition"
-        >
-          <Pencil size={18} className="text-[#4338CA]" />
-        </button>
+      <div>
+        <h3 className="font-semibold mb-2">Keamanan</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {keamananOptions.map((item) => (
+            <Label key={item} className="flex items-center gap-2">
+              <Checkbox
+                checked={form.keamanan.includes(item)}
+                onCheckedChange={() => handleCheckboxChange("keamanan", item)}
+              />
+              {item}
+            </Label>
+          ))}
+        </div>
       </div>
-      <ul className="list-disc list-inside">
-        {tenantPreference.fasilitas.map((item: string, idx: number) => (
-          <li key={idx}>{item}</li>
-        ))}
-      </ul>
 
-      <div className="flex justify-between items-center border-b pb-2 pt-4">
-        <h2 className="text-lg font-semibold">Keamanan</h2>
-
-        <button
-          onClick={() => openModal("keamanan")}
-          className="bg-[#E0E7FF] rounded-full p-2 hover:bg-[#C7D2FE] transition"
-        >
-          <Pencil size={18} className="text-[#4338CA]" />
-        </button>
+      <div>
+        <h3 className="font-semibold mb-2">Lokasi Preferensi</h3>
+        <p className="text-sm text-gray-500 mb-2">
+          Klik pada peta untuk memilih lokasi kost yang diinginkan.
+        </p>
+        <div className="h-[300px] rounded overflow-hidden">
+          <LocationPicker
+            value={form.lokasi.koordinat}
+            onChange={(lat, lng) =>
+              setForm((prev) => ({
+                ...prev,
+                lokasi: { koordinat: { lat, lng } },
+              }))
+            }
+          />
+        </div>
+        <p className="text-sm mt-2 text-gray-600">
+          Koordinat: {form.lokasi.koordinat.lat.toFixed(5)},{" "}
+          {form.lokasi.koordinat.lng.toFixed(5)}
+        </p>
       </div>
-      <ul className="list-disc list-inside">
-        {preferensi.keamanan.map((item, idx) => (
-          <li key={idx}>{item}</li>
-        ))}
-      </ul>
 
-      {/* Modal untuk edit preferensi */}
-      <EditPreferenceModal />
-    </div>
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Menyimpan..." : "Simpan Preferensi"}
+      </Button>
+    </form>
   );
 }

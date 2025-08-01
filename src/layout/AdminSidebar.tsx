@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSidebar } from "../contexts/SidebarContext";
+// import { useSidebar } from "../contexts/SidebarContext";
 import {
   Banknote,
   ChevronDown,
@@ -16,6 +16,7 @@ import {
   Star,
   User,
 } from "lucide-react";
+import { useSidebarStore } from "@/stores/sidebar.store";
 
 type NavItem = {
   name: string;
@@ -93,7 +94,8 @@ const othersItems: NavItem[] = [
 ];
 
 const AdminSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered } =
+    useSidebarStore();
   const pathname = usePathname();
 
   const isActive = useCallback((path: string) => path === pathname, [pathname]);

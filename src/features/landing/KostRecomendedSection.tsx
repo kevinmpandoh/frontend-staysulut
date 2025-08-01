@@ -81,8 +81,8 @@ const KostRecomendedSection = () => {
           ref={scrollRef}
           className="flex gap-2 overflow-x-auto md:overflow-x-hidden scroll-smooth no-scrollbar"
         >
-          {kostRecomended?.data.map((kost: any) => (
-            <div key={kost.id} className="min-w-[243px] md:flex-1">
+          {kostRecomended?.data.map((kost: any, index: number) => (
+            <div key={index} className="min-w-[243px] md:flex-1">
               <KostCard
                 id={kost.id}
                 title={kost.nama_kost}

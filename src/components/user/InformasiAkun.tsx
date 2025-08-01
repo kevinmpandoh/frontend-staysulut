@@ -19,8 +19,6 @@ export default function InformasiAkun() {
 
   const [openEdit, setOpenEdit] = useState(false);
 
-  console.log(user, "IUSER");
-
   const handleUpdateProfile = (data: any) => {
     updateProfile(data); // akan trigger ke backend dan re-fetch data
     setOpenEdit(false);

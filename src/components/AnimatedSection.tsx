@@ -10,15 +10,18 @@ const fadeInVariant = {
 export default function AnimateSection({
   children,
   id,
+  forceAnimate = false,
 }: {
   children: ReactNode;
   id?: string;
+  forceAnimate?: boolean; // Tambahan opsional
 }) {
   return (
     <motion.div
       id={id}
       initial="hidden"
-      whileInView="show"
+      animate={forceAnimate ? "show" : undefined}
+      whileInView={forceAnimate ? undefined : "show"}
       viewport={{ once: true }}
       variants={fadeInVariant}
     >

@@ -2,12 +2,9 @@
 import ChatPopup from "@/components/chat/ChatPopup";
 import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
-// import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
-// import NotificationDropdown from "@/components/header/NotificationDropdown";
-// import UserDropdown from "@/components/header/UserDropdown";
-import { useSidebar } from "@/contexts/SidebarContext";
 import { useAuthStore } from "@/stores/auth.store";
 import { useChatPopupStore } from "@/stores/chatPopup.store";
+import { useSidebarStore } from "@/stores/sidebar.store";
 import { MessageSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +25,8 @@ const AppHeader: React.FC = () => {
 
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
-  const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const { isMobileOpen, toggleSidebar, toggleMobileSidebar } =
+    useSidebarStore();
   const { user } = useAuthStore();
 
   const handleToggle = () => {

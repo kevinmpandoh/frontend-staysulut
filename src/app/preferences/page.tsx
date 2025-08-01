@@ -7,7 +7,14 @@ import JenisKostStep from "./components/JenisKostStep";
 import LocationStep from "./components/LocationStep";
 import PriceStep from "./components/PriceStep";
 
-const steps = ["Lokasi", "Harga", "Jenis Kost", "Fasilitas", "Tinjau"];
+const steps = [
+  "Lokasi",
+  "Harga",
+  "Jenis Kost",
+  "Fasilitas",
+  "Keamanan",
+  "Tinjau",
+];
 
 const stepContent = [
   {
@@ -27,6 +34,10 @@ const stepContent = [
     subtitle: "Fasilitas apa saja yang Anda inginkan?",
   },
   {
+    title: "Keamanan / Peraturan Kost",
+    subtitle: "Apa saja keamanan atau peraturan yang Anda harapkan?",
+  },
+  {
     title: "Tinjau Preferensi",
     subtitle: "Periksa kembali preferensi kost Anda sebelum dikirim.",
   },
@@ -36,22 +47,33 @@ import { usePreferenceStore } from "@/stores/preference.store";
 
 import { useFacilities } from "@/hooks/useFacilities";
 import { usePreference } from "@/hooks/usePreference";
+import KeamananStep from "./components/KeamananStep";
 export default function PreferencesPage() {
   const [step, setStep] = useState(0);
-  const lokasi = usePreferenceStore((state) => state.location);
-  const harga = usePreferenceStore((state) => state.price);
-  const jenis = usePreferenceStore((state) => state.jenisKost);
-  const fasilitasKost = usePreferenceStore((state) => state.kostFacilities);
-  const fasilitasKamar = usePreferenceStore((state) => state.roomFacilities);
-  const { savePreferences, savingPreferences } = usePreference();
+
+  const {
+    location,
+    price,
+    jenisKost,
+    kostFacilities,
+    roomFacilities,
+    keamanan,
+  } = usePreferenceStore();
+  const {
+    tenantPreference,
+    isLoading: tenantPreferenceLoading,
+    savePreferences,
+    savingPreferences,
+  } = usePreference();
   const { data, isLoading } = useFacilities();
 
   const isStepValid =
-    (step === 0 && !!lokasi) ||
-    (step === 1 && !!harga) ||
-    (step === 2 && !!jenis) ||
-    (step === 3 && fasilitasKost.length > 0 && fasilitasKamar.length > 0) ||
-    step === 4;
+    (step === 0 && !!location) ||
+    (step === 1 && !!price?.min && !!price?.max) ||
+    (step === 2 && !!jenisKost) ||
+    (step === 3 && kostFacilities.length > 0 && roomFacilities.length > 0) ||
+    (step === 4 && keamanan.length > 0) ||
+    step === 5;
 
   const mapIdsToNames = (ids: string[]) => {
     if (!data) return [];
@@ -60,8 +82,8 @@ export default function PreferencesPage() {
       .filter(Boolean);
   };
 
-  const kostNames = mapIdsToNames(fasilitasKost);
-  const kamarNames = mapIdsToNames(fasilitasKamar);
+  const kostNames = mapIdsToNames(kostFacilities);
+  const kamarNames = mapIdsToNames(roomFacilities);
 
   const handleSave = () => {
     savePreferences();
@@ -123,21 +145,24 @@ export default function PreferencesPage() {
               {step === 3 && (
                 <FasilitasStep data={data} isLoading={isLoading} />
               )}
+              {step === 4 && <KeamananStep />}
 
-              {step === 4 && (
+              {step === 5 && (
                 <div>
                   <p className="text-gray-500">
                     Tinjau kembali preferensi kost kamu sebelum dikirim:
                   </p>
                   <ul className="list-disc ml-5 mt-2 text-sm text-gray-700 space-y-1">
-                    <li>Lokasi: {lokasi?.detail || "-"}</li>
+                    <li>Lokasi: {location?.detail || "-"}</li>
                     <li>
-                      Harga Maksimal:{" "}
-                      {harga
-                        ? `Rp ${Number(harga).toLocaleString("id-ID")}`
+                      Harga:{" "}
+                      {price?.min && price?.max
+                        ? `Rp ${Number(price.min).toLocaleString(
+                            "id-ID"
+                          )} - Rp ${Number(price.max).toLocaleString("id-ID")}`
                         : "-"}
                     </li>
-                    <li>Jenis Kost: {jenis || "-"}</li>
+                    <li>Jenis Kost: {jenisKost || "-"}</li>
                     <li>
                       Fasilitas Kost:{" "}
                       {isLoading ? "Memuat..." : kostNames.join(", ") || "-"}

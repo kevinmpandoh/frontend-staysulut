@@ -9,10 +9,7 @@ interface ProtectedRouteProps {
   allowedRoles?: string[]; // contoh: ["tenant", "admin"]
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  children,
-  allowedRoles,
-}) => {
+const AuthProtected: React.FC<ProtectedRouteProps> = ({ children }) => {
   const router = useRouter();
   const { user, isAuthenticated, isHydrated } = useAuthStore();
 
@@ -22,20 +19,22 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     // Tunggu sampai Zustand hydration selesai
     if (isHydrated) {
       // Jika belum login → redirect ke login
-      if (!isAuthenticated || !user) {
-        router.replace("/auth/login");
-        return;
-      }
-
-      // Jika login, tapi role tidak sesuai
-      if (allowedRoles && !allowedRoles.includes(user.role)) {
-        router.push("/unauthorized");
+      if (isAuthenticated || user) {
+        if (user?.role === "admin") {
+          router.push("/dashboard/admin");
+        } else if (user?.role === "tenant") {
+          router.push("/user/profile");
+        } else if (user?.role === "owner") {
+          router.push("/dashboard/owner");
+        } else {
+          router.push("/");
+        }
         return;
       }
 
       setIsLoading(false); // lolos semua pengecekan
     }
-  }, [isHydrated, isAuthenticated, user, allowedRoles, router]);
+  }, [isHydrated, isAuthenticated, user, router]);
 
   if (isLoading) {
     return (
@@ -48,4 +47,4 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <>{children}</>;
 };
 
-export default ProtectedRoute;
+export default AuthProtected;
