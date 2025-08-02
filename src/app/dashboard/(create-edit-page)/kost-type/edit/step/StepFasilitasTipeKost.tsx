@@ -56,7 +56,6 @@ const StepFasilitasTipeKost = () => {
     // setCurrentStep(3);
     setOnNext(
       handleSubmit((data) => {
-        console.log(kostTypeId, "KOSTTYPEID");
         if (!kostTypeId) return;
         saveFacilities(
           {

@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
 import ScrollToTopButton from "@/components/ScrollToTop";
 // import { SetAuthUser } from "@/components/SetAuthUser";
 // import { getUserFromServer } from "@/services/authServer.service";

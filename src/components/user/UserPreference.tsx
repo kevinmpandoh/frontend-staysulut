@@ -31,7 +31,6 @@ export default function PreferensiPengguna() {
   // console.log(fasilitas?.map((f: any) => f.nama_fasilitas));
 
   const fasilitasOptions = fasilitas?.map((f: any) => f.nama_fasilitas);
-  console.log(fasilitasOptions);
 
   const [form, setForm] = useState({
     price: { min: 0, max: 0 },

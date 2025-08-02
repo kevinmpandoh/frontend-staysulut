@@ -2,8 +2,8 @@
 
 import ProtectedRoute from "@/components/HOC/ProtectedRoute";
 
-import AdminSidebar from "@/layout/AdminSidebar";
-import AppHeader from "@/layout/AppHeader";
+import AdminSidebar from "@/components/layout/AdminSidebar";
+import AppHeader from "@/components/layout/AppHeader";
 import { useSidebarStore } from "@/stores/sidebar.store";
 // import AppHeader from "@/layout/AppHeader";
 // import Backdrop from "@/layout/Backdrop";

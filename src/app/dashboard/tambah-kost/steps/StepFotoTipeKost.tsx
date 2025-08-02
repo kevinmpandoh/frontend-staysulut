@@ -40,17 +40,12 @@ export default function StepFotoTipeKost() {
     submitPhotoRoom,
   } = usePhotoRoom();
 
-  console.log(photoRoom, "PHOTO ROOM");
-
   const groupedPhotos = useMemo(() => {
     const data: Record<Photo["kategori"], Photo[]> = {
       "Dalam Kamar": [],
       "Depan Kamar": [],
       "Kamar Mandi": [],
     };
-
-    console.log(data, "INITIAL DATA");
-    console.log(photoRoom, "PHOTO ROOM DATA");
 
     photoRoom?.forEach((p: Photo) => {
       if (data[p.kategori]) data[p.kategori].push(p);
@@ -120,7 +115,6 @@ export default function StepFotoTipeKost() {
   }, [setOnNext, setCurrentStep, submitPhotoRoom, kostTypeId]);
 
   const handleDelete = async (kategori: Photo["kategori"], photoId: string) => {
-    console.log(kategori, photoId, "HANDLE DELETE");
     setDeletingPhotoId(photoId);
     if (!kostTypeId) {
       toast.error("Tipe Kost tidak ditemukan");

@@ -52,14 +52,14 @@ const AdminKostSubmissionsPage = () => {
 
   const handleAccept = async () => {
     approveKost(selectedKost._id);
-    console.log(selectedKost, "APPROVE");
+
     setShowAcceptModal(false);
     refetch();
   };
 
   const handleReject = async (reason: string) => {
     rejectKost({ kostId: selectedKost._id, reason });
-    console.log(reason, "REASON");
+
     setShowRejectModal(false);
     refetch();
   };

@@ -54,8 +54,6 @@ const AdminKostDetailPage = () => {
 
   if (isLoading || !kost) return <p>Loading...</p>;
 
-  console.log(data, "DATA");
-
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-md shadow">
       <h1 className="text-2xl font-bold mb-2">{kost.nama_kost}</h1>

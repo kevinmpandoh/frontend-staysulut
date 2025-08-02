@@ -6,6 +6,20 @@ const api = axios.create({
   withCredentials: true, // Jika menggunakan cookies untuk auth
 });
 
+// Interceptor untuk handle response 401 (token expired)
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response && error.response.status === 401) {
+//       if (typeof window !== "undefined") {
+//         // Token expired → redirect ke login
+//         window.location.href = "/auth/login";
+//       }
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {

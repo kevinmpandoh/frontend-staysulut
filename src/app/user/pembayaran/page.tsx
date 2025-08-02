@@ -72,8 +72,6 @@ const PaymentTenant = () => {
 
   const { billing, loadingBilling, errorBilling } = useBilling({ invoice });
 
-  console.log(billing, "BILLING");
-
   const {
     payment,
     loadingPayment,

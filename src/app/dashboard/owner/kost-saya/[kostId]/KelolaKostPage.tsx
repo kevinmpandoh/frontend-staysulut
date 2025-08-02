@@ -20,7 +20,6 @@ const KelolaKostPage = ({ kostId }: { kostId: string }) => {
     return <h1>Kost tidak ditemukan</h1>;
   }
 
-  console.log(kost, "KOST");
   return (
     <>
       <Button type="button" variant={"link"} size={"lg"}>

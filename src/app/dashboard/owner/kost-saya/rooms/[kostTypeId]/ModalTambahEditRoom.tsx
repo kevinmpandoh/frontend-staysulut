@@ -74,7 +74,6 @@ export const ModalTambahEditRoom = ({
 
   const mutation = useMutation({
     mutationFn: (data: FormValues) => {
-      console.log(data);
       const payload = {
         nomor_kamar: data.nomor_kamar,
         lantai: Number(data.lantai),

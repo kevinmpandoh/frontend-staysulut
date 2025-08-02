@@ -223,7 +223,6 @@ const KostCard = ({ kost }: { kost: Kost }) => {
         onConfirm={() => {
           deleteMutation.mutate();
           // setShowDeleteModal(false);
-          console.log("DELETED");
         }}
         title={`Hapus ${kost.namaKost}?`}
         description="Tindakan ini tidak dapat dibatalkan."

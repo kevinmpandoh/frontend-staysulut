@@ -63,7 +63,6 @@ const StepFasilitasKost = () => {
           },
           {
             onSuccess: (res) => {
-              console.log(res, "RESSPONSE");
               setCurrentStep(4);
               router.replace(
                 `/dashboard/tambah-kost?kost_id=${res.data.kostId}&step=4`

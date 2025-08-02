@@ -46,8 +46,6 @@ export const EditNameDialog = ({
     defaultValues: { name: defaultName },
   });
 
-  console.log(defaultName, "DEFAULT");
-
   useEffect(() => {
     reset({ name: defaultName });
   }, [defaultName, reset]);

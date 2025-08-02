@@ -27,8 +27,8 @@ import { useAuthStore } from "@/stores/auth.store";
 // import { useAuth } from "@/contexts/AuthContext";
 import ChatPopup from "@/components/chat/ChatPopup";
 import { useChatPopupStore } from "@/stores/chatPopup.store";
-import { Dropdown } from "./ui/dropdown/Dropdown";
-import { DropdownItem } from "./ui/dropdown/DropdownItem";
+import { Dropdown } from "../ui/dropdown/Dropdown";
+import { DropdownItem } from "../ui/dropdown/DropdownItem";
 
 const Navbar = () => {
   const { logout } = useAuth();

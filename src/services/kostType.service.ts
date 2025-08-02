@@ -12,7 +12,6 @@ export const kostTypeService = {
   },
   getDetailOwner: async (id: string): Promise<any> => {
     try {
-      console.log(id, "IDNYA LIH");
       const response = await api.get(`/owner/kost-type/${id}`);
       return response.data.data;
     } catch (error) {

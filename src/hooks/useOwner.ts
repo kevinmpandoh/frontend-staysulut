@@ -47,7 +47,6 @@ export const useOwner = () => {
       return response;
     },
     onSuccess: (data) => {
-      console.log(data, "DATA");
       if (data?.url) {
         // Update state user
         setUser({ ...user, foto_profile: data.url } as User);

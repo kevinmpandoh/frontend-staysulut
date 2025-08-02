@@ -1,11 +1,10 @@
 // components/ProfilePicture.tsx
 "use client";
 
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 import { useTenant } from "@/hooks/useTenant";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import { useAuthStore } from "@/stores/auth.store";
 
 interface ProfilePictureProps {
   src: string;
@@ -13,7 +12,6 @@ interface ProfilePictureProps {
 
 export const ProfilePicture = ({ src }: ProfilePictureProps) => {
   const { uploadPhoto } = useTenant();
-  const { user } = useAuthStore();
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -22,10 +20,6 @@ export const ProfilePicture = ({ src }: ProfilePictureProps) => {
     // setPreview(URL.createObjectURL(file)); // instant preview
     uploadPhoto.mutate(file);
   };
-
-  useEffect(() => {
-    console.log("User updated:", user);
-  }, [user]);
 
   return (
     <div className="relative group">

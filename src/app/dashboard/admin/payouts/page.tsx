@@ -44,8 +44,6 @@ const AdminPayout = () => {
 
   const payouts = data || [];
 
-  console.log(payouts);
-
   return (
     <div className="bg-white w-full rounded-lg shadow-md p-6 mt-8 overflow-x-auto">
       <h2 className="font-semibold mb-4 text-xl">Payout ke Pemilik Kost</h2>

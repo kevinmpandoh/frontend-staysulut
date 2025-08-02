@@ -63,7 +63,6 @@ const StepFasilitasKost = () => {
           },
           {
             onSuccess: () => {
-              console.log("DIJALANKAN");
               setIsSubmitSuccess(true);
             },
           }

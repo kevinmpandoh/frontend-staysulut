@@ -16,7 +16,7 @@ export const bookingService = {
 
   getOwnerBookings: async (status: string) => {
     const query = status && status !== "all" ? `?status=${status}` : "";
-    console.log(query, "QUERY");
+
     const response = await api.get(`/owner/bookings${query}`);
     return response.data.data;
   },

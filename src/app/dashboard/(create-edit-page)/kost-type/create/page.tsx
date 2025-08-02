@@ -91,7 +91,6 @@ const CreateKostType = () => {
 
     // Validasi jika stepParam lebih dari yang diizinkan
     if (stepParam > allowedStep) {
-      console.log("DI JALANKAN");
       router.replace(
         `/dashboard/kost-type/create?kost_id=${kostId}&kost_type_id=${kostTypeId}&step=${allowedStep}`
       );

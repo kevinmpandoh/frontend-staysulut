@@ -10,7 +10,6 @@ import Image from "next/image";
 import React from "react";
 
 const TableBillingOwner = ({ billings }: { billings: any }) => {
-  console.log(billings);
   return (
     <>
       <Table>

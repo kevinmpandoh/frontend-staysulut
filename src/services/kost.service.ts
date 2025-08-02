@@ -56,7 +56,6 @@ export const KostService = {
   },
   getKostCreate: async (kostId: string) => {
     try {
-      console.log("INI YANG DI EKSEKUSI");
       const response = await api.get(`/owner/kosts/${kostId}/detail-create`);
 
       return response.data.data;

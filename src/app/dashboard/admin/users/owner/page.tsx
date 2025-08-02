@@ -39,7 +39,6 @@ const OwnerListPage = () => {
   if (isLoading) {
     <h1>Loading</h1>;
   }
-  console.log(owners, "DATANYA");
 
   return (
     <div>

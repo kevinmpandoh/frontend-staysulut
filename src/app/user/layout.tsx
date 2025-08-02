@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import ProtectedRoute from "@/components/HOC/ProtectedRoute";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 // import { SetAuthUser } from "@/components/SetAuthUser";
 // import { getUserFromServer } from "@/services/authServer.service";

@@ -48,9 +48,6 @@ export default function StepFotoTipeKost() {
       "Kamar Mandi": [],
     };
 
-    console.log(data, "INITIAL DATA");
-    console.log(photoRoom, "PHOTO ROOM DATA");
-
     photoRoom?.forEach((p: Photo) => {
       if (data[p.kategori]) data[p.kategori].push(p);
     });
@@ -105,7 +102,6 @@ export default function StepFotoTipeKost() {
         { kostTypeId },
         {
           onSuccess: (res) => {
-            console.log(res, "RESNYA");
             setProgressStep(4);
             setCurrentStep(4);
             router.replace(
@@ -128,7 +124,6 @@ export default function StepFotoTipeKost() {
   ]);
 
   const handleDelete = async (kategori: Photo["kategori"], photoId: string) => {
-    console.log(kategori, photoId, "HANDLE DELETE");
     setDeletingPhotoId(photoId);
     if (!kostTypeId) {
       toast.error("Tipe Kost tidak ditemukan");

@@ -32,7 +32,6 @@ export default function PengaturanOwnerLayout({
 }) {
   const pathname = usePathname();
 
-  console.log("Current Pathname:", pathname);
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-6">

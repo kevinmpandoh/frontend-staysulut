@@ -2,9 +2,9 @@
 
 import ProtectedRoute from "@/components/HOC/ProtectedRoute";
 // import { useSidebar } from "@/contexts/SidebarContext";
-import AppHeader from "@/layout/AppHeader";
+import AppHeader from "@/components/layout/AppHeader";
 // import AppHeader from "@/layout/AppHeader";
-import AppSidebar from "@/layout/AppSidebar";
+import AppSidebar from "@/components/layout/AppSidebar";
 import { useSidebarStore } from "@/stores/sidebar.store";
 // import Backdrop from "@/layout/Backdrop";
 import React from "react";

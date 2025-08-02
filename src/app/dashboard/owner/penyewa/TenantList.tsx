@@ -7,8 +7,6 @@ import TenantCard from "./TenantCard";
 const TenantList = () => {
   const { activeBooking, loadingActive } = useBookingOwner({ status: "all" });
 
-  console.log(activeBooking, "ACTIVE BOOKING");
-
   if (loadingActive) {
     return (
       <div className="flex items-center justify-center h-full">

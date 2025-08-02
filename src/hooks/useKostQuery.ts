@@ -21,7 +21,7 @@ export const useKostList = () => {
 
 export const useKostRecomended = () => {
   const { user } = useAuthStore();
-  console.log(user, "USERNYA");
+
   return useQuery({
     queryKey: ["kosts", "recomended"],
     queryFn: async () => {

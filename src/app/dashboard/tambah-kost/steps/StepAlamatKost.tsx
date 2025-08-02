@@ -64,7 +64,6 @@ export default function StepAlamatKost() {
     setCurrentStep(2);
     setOnNext(
       handleSubmit((data) => {
-        console.log(data, kostId, "DATA SUBMIT");
         if (!kostId) return;
 
         createAddress(
@@ -83,7 +82,6 @@ export default function StepAlamatKost() {
           },
           {
             onSuccess: (res) => {
-              console.log(res, "DATA");
               setCurrentStep(res.progress_step);
               router.replace(
                 `/dashboard/tambah-kost?kost_id=${res.kostId}&step=3`

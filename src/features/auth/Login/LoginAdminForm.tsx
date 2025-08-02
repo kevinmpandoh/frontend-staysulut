@@ -38,7 +38,6 @@ const LoginAdminForm = () => {
         setUser(res.data);
         queryClient.invalidateQueries({ queryKey: ["me"] });
 
-        console.log("Login berhasil:", res);
         router.push("/dashboard/admin");
 
         // simpan token, redirect, dsb
