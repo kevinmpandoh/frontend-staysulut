@@ -59,12 +59,7 @@ export default function PreferencesPage() {
     roomFacilities,
     keamanan,
   } = usePreferenceStore();
-  const {
-    tenantPreference,
-    isLoading: tenantPreferenceLoading,
-    savePreferences,
-    savingPreferences,
-  } = usePreference();
+  const { savePreferences, savingPreferences } = usePreference();
   const { data, isLoading } = useFacilities();
 
   const isStepValid =

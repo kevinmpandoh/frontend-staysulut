@@ -90,7 +90,14 @@ const StepTipeKost = () => {
     formState: { errors },
   } = useForm<z.infer<typeof tipeKostSchema>>({
     resolver: zodResolver(tipeKostSchema),
-    // defaultValues: tipeKostData,
+    defaultValues: {
+      namaTipe: "",
+      ukuran: presetUkuran[0],
+      panjangCustom: undefined,
+      lebarCustom: undefined,
+      totalKamar: 0,
+      kamarTerisi: 0,
+    },
   });
 
   const { kostType } = useCreateKostStore();
@@ -253,7 +260,11 @@ const StepTipeKost = () => {
 
         <div className="mb-6 max-w-lg space-y-2">
           <Label className="text-xl">Jumlah keseluruhan Kamar</Label>
-          <Input type="number" placeholder="10" {...register("totalKamar")} />
+          <Input
+            type="number"
+            placeholder="10"
+            {...register("totalKamar", { valueAsNumber: true })}
+          />
           {errors.totalKamar && (
             <p className="text-sm text-red-500">{errors.totalKamar.message}</p>
           )}
@@ -261,7 +272,11 @@ const StepTipeKost = () => {
 
         <div className="mb-6 max-w-lg space-y-2">
           <Label className="text-xl">Jumlah Kamar yang terisi</Label>
-          <Input type="number" placeholder="2" {...register("kamarTerisi")} />
+          <Input
+            type="number"
+            placeholder="2"
+            {...register("kamarTerisi", { valueAsNumber: true })}
+          />
           {errors.kamarTerisi && (
             <p className="text-sm text-red-500">{errors.kamarTerisi.message}</p>
           )}
