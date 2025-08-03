@@ -55,17 +55,16 @@ export const PaymentMethodDialog = ({
                 {group.methods.map((method) => {
                   const isSelected = selected?.value === method.value;
                   return (
-                    <button
+                    <label
                       key={method.value}
-                      type="button"
-                      onClick={() => setSelected(method)}
-                      className={` w-full cursor-pointer flex items-center justify-between border rounded-md px-4 py-3 gap-2 transition ${
+                      className={`w-full cursor-pointer flex items-center justify-between border rounded-md px-4 py-3 gap-2 transition ${
                         isSelected
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-300"
                       }`}
                     >
-                      <span className="flex items-center gap-2">
+                      {/* Kiri: Logo dan Nama */}
+                      <div className="flex items-center gap-2">
                         <Image
                           src={method.logo}
                           alt={method.name}
@@ -73,23 +72,19 @@ export const PaymentMethodDialog = ({
                           width={24}
                           height={24}
                         />
-                        {method.name}
-                      </span>
-                      {/* <Image
-                        src={method.logo}
-                        alt={method.name}
-                        width={24}
-                        height={24}
-                        className="object-contain"
-                      /> */}
-                      <span
-                        className={`w-4 h-4 rounded-full border ${
-                          isSelected
-                            ? "bg-indigo-600 border-indigo-600"
-                            : "border-gray-400"
-                        }`}
+                        <span>{method.name}</span>
+                      </div>
+
+                      {/* Kanan: Radio Button */}
+                      <input
+                        type="radio"
+                        name="payment-method"
+                        value={method.value}
+                        checked={isSelected}
+                        onChange={() => setSelected(method)}
+                        className="accent-indigo-600 w-4 h-4"
                       />
-                    </button>
+                    </label>
                   );
                 })}
               </div>

@@ -82,7 +82,7 @@ export const PaymentInstruction = ({ payment }: PaymentInstructionProps) => {
         ) : payment.payment_type === "gopay" ? (
           <div>
             <p>Scan QR Code berikut:</p>
-            <img
+            <Image
               src={payment?.qris_url || ""}
               alt="QR Code"
               width={300}

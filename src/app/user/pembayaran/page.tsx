@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 import { useBilling } from "@/hooks/useBilling";
 import { toast } from "sonner";
-import { notFound, useSearchParams } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { PAYMENT_METHOD } from "@/constants/paymentMethod";
 import { PaymentMethodDialog } from "@/components/Modal/PaymentMethodModal";
 import { PaymentMethodSelector } from "@/components/payment/PaymentMethodSelector";
@@ -66,6 +66,8 @@ const PaymentTenant = () => {
     logo: string;
     value: string;
   } | null>(null);
+
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const invoice = searchParams.get("invoice") ?? "";
@@ -176,6 +178,9 @@ const PaymentTenant = () => {
         <section className="flex-1 w-full">
           <button
             type="button"
+            onClick={() => {
+              router.back();
+            }}
             className="flex items-center text-gray-700 font-semibold text-sm mb-6 select-none gap-2"
           >
             <ArrowLeft size={18} /> Kembali

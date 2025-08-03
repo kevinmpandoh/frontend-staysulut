@@ -16,9 +16,13 @@ import { Button } from "@/components/ui/button";
 import { useChat } from "@/hooks/useChat";
 import { ReviewModal } from "./ReviewModal";
 import { useReview } from "@/hooks/useReview";
+import { TagihanModal } from "./TagihanModal";
+import { KontrakModal } from "./KontrakModal";
 
 const KostSayaPage = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showTagihanModal, setShowTagihanModal] = useState(false);
+  const [showKontrakModal, setShowKontrakModal] = useState(false);
 
   const {
     activeBooking: data,
@@ -103,12 +107,14 @@ const KostSayaPage = () => {
               <MapPin size={18} />
               <span>{data.alamat}</span>
             </p>
-            <a
-              className="text-sm font-semibold text-gray-900 underline underline-offset-2 hover:text-gray-700"
-              href="#"
-            >
-              Lihat Detail Kost
-            </a>
+            <Button variant={"ghost"}>
+              <Link
+                // className="text-sm font-semibold text-gray-900 underline underline-offset-2 hover:text-gray-700"
+                href={`/kosts/${data.kostTypeId}`}
+              >
+                Lihat Detail Kost
+              </Link>
+            </Button>
           </div>
         </div>
         <hr className="my-8" />
@@ -146,22 +152,21 @@ const KostSayaPage = () => {
           Aktifitas
         </h3>
         <div className="flex flex-wrap gap-6">
-          <Link
-            href={`/user/kost-saya/${data.bookingId}/tagihan`}
+          <button
+            onClick={() => setShowTagihanModal(true)}
             className="bg-white rounded-lg border shadow-md p-6 flex flex-col items-center justify-center w-30 h-30 text-gray-700 font-medium select-none hover:shadow-lg transition-all duration-200 ease-in-out hover:bg-blue-50 focus:outline-none"
-            type="button"
           >
             <Clock size={38} />
             <span className="text-sm">Tagihan Kost</span>
-          </Link>
-          <Link
-            href={`/user/kost-saya/${data.bookingId}/kontrak`}
+          </button>
+
+          <button
+            onClick={() => setShowKontrakModal(true)}
             className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center w-32 h-32 text-gray-700 font-semibold select-none hover:shadow-lg transition-all duration-200 ease-in-out hover:bg-blue-50 focus:outline-none"
-            type="button"
           >
             <Clipboard />
             Kontrak Kost
-          </Link>
+          </button>
           <button
             className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center w-32 h-32 text-gray-700 font-semibold select-none hover:shadow-lg transition-all duration-200 ease-in-out hover:bg-blue-50 focus:outline-none"
             type="button"
@@ -184,6 +189,17 @@ const KostSayaPage = () => {
         open={showReviewModal}
         onClose={() => setShowReviewModal(false)}
         onSubmit={handleReviewSubmit}
+      />
+      <TagihanModal
+        open={showTagihanModal}
+        onClose={() => setShowTagihanModal(false)}
+        bookingId={data.bookingId}
+      />
+
+      <KontrakModal
+        open={showKontrakModal}
+        onClose={() => setShowKontrakModal(false)}
+        bookingId={data.bookingId}
       />
     </>
   );

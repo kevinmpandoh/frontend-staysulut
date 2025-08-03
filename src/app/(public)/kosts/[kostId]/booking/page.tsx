@@ -11,7 +11,7 @@ export default async function BookingPage({ params }: BookingPageProps) {
 
   return (
     <ProtectedRoute allowedRoles={["tenant"]}>
-      <div className="max-w-6xl mx-auto p-4 flex flex-col md:flex-row gap-6">
+      <div className="max-w-7xl mx-auto p-4 flex flex-col md:flex-row">
         <BookingTenant kostId={kostId} />
       </div>
     </ProtectedRoute>

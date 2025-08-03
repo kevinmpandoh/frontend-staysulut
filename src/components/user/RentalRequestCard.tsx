@@ -6,9 +6,11 @@ import React, { useEffect, useState } from "react";
 import { parse, isAfter, differenceInSeconds } from "date-fns";
 import { id as ind } from "date-fns/locale";
 import { Button } from "../ui/button";
+import { statusColorMap, statusLabelMap } from "@/constants/statusBadge";
 
 type RentalRequestCardProps = {
   id?: string;
+  kostId: string;
   date: string;
   status: string;
   kostName: string;
@@ -25,6 +27,7 @@ type RentalRequestCardProps = {
 
 const RentalRequestCard: React.FC<RentalRequestCardProps> = ({
   id,
+  kostId,
   date,
   status,
   kostName,
@@ -110,22 +113,31 @@ const RentalRequestCard: React.FC<RentalRequestCardProps> = ({
       checkIn(id);
     }
   };
+
+  const badgeStyle = statusColorMap[status] || {
+    text: "text-gray-600",
+    bg: "bg-gray-200",
+  };
   return (
     <div className="border border-gray-300 rounded-lg p-4 mb-6 max-w-3xl">
       <div className="flex justify-between items-start mb-2">
         <p className="text-md font-semibold text-black">{date}</p>
-        <span className="text-xs font-semibold text-[#b45309] bg-[#fef3c7] rounded-full px-2 py-0.5 select-none">
-          {status === "pending" ? "Menunggu Persetujuan" : status}
+        <span
+          className={`text-xs font-semibold ${badgeStyle.text} ${badgeStyle.bg} rounded-full px-2 py-0.5 select-none`}
+        >
+          {statusLabelMap[status] ?? status}
         </span>
       </div>
       <div className="flex gap-4">
-        <Image
-          alt="Room"
-          className="w-[120px] h-[100px] rounded-md object-cover flex-shrink-0"
-          height="90"
-          src={imageUrl || "/kost.jpg"}
-          width="120"
-        />
+        <Link href={`/kosts/${kostId}`}>
+          <Image
+            alt="Room"
+            className="w-[120px] h-[100px] rounded-md object-cover flex-shrink-0"
+            height="90"
+            src={imageUrl || "/kost.jpg"}
+            width="120"
+          />
+        </Link>
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-semibold text-[#1e40af] bg-[#e0e7ff] rounded px-2 py-0.5 select-none">
@@ -186,8 +198,8 @@ const RentalRequestCard: React.FC<RentalRequestCardProps> = ({
           </Link>
         )}
         {status === "waiting_for_payment" && (
-          <div className="flex flex-col items-end">
-            <span className="text-xs text-red-600 mt-1">
+          <div className="flex items-center justify-center gap-4">
+            <span className="text-sm text-red-600 mt-1">
               Sisa waktu pembayaran: {countdown || "Waktu Habis"}
             </span>
             <Link
@@ -200,36 +212,43 @@ const RentalRequestCard: React.FC<RentalRequestCardProps> = ({
           </div>
         )}
         {status === "waiting_for_checkin" && (
-          <>
+          <div
+            className={`w-full flex ${
+              !canCheckIn && countdown ? "justify-between" : "justify-end"
+            } items-center`}
+          >
             {!canCheckIn && countdown && (
-              <span className="text-xs text-gray-500 mt-1">
-                Check-in tersedia dalam {countdown}
-              </span>
+              <div className="text-sm text-warning-500 mt-1">
+                Check-in tersedia dalam{" "}
+                <span className="font-semibold">{countdown}</span>
+              </div>
             )}
-            <button
-              className=" border border-[#3b49df] cursor-pointer text-primary font-semibold text-sm rounded px-4 py-2 transition"
-              type="button"
-            >
-              Ajukan Pengembalian
-            </button>
-            <button
-              onClick={handleCheckIn}
-              disabled={!canCheckIn || checkingIn}
-              className={`${
-                canCheckIn
-                  ? "bg-[#3b49df] hover:bg-[#2a37b8] cursor-pointer"
-                  : "bg-gray-300 cursor-not-allowed"
-              } text-white font-semibold text-sm rounded px-4 py-2 transition`}
-              // className="bg-[#3b49df] cursor-pointer text-white font-semibold text-sm rounded px-4 py-2 hover:bg-[#2a37b8] transition"
-              type="button"
-            >
-              {checkingIn
-                ? "Memproses..."
-                : canCheckIn
-                ? "Check-In Sekarang"
-                : "Belum Bisa Check-In"}
-            </button>
-          </>
+            <div className="space-x-2.5">
+              <button
+                className=" border border-[#3b49df] cursor-pointer text-primary font-semibold text-sm rounded px-4 py-2 transition"
+                type="button"
+              >
+                Ajukan Pengembalian
+              </button>
+              <button
+                onClick={handleCheckIn}
+                disabled={!canCheckIn || checkingIn}
+                className={`${
+                  canCheckIn
+                    ? "bg-[#3b49df] hover:bg-[#2a37b8] cursor-pointer"
+                    : "bg-gray-300 cursor-not-allowed"
+                } text-white font-semibold text-sm rounded px-4 py-2 transition`}
+                // className="bg-[#3b49df] cursor-pointer text-white font-semibold text-sm rounded px-4 py-2 hover:bg-[#2a37b8] transition"
+                type="button"
+              >
+                {checkingIn
+                  ? "Memproses..."
+                  : canCheckIn
+                  ? "Check-In Sekarang"
+                  : "Belum Bisa Check-In"}
+              </button>
+            </div>
+          </div>
         )}
         {status === "Aktif" && (
           <>

@@ -1,9 +1,10 @@
 "use client";
 import { usePayment } from "@/hooks/usePayment";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 
 import { PAYMENT_METHOD } from "@/constants/paymentMethod";
+import { PaymentDetailModal } from "./PaymentDetailModal";
 
 export function findPaymentMethod(methodValue: string) {
   for (const category of PAYMENT_METHOD) {
@@ -15,6 +16,8 @@ export function findPaymentMethod(methodValue: string) {
 
 const TenantPaymentList = () => {
   const { tenantPayment, isLoading } = usePayment({});
+  const [openDetailModal, setOpenDetailModal] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<any | null>(null);
 
   if (isLoading) {
     return <p>Loading..</p>;
@@ -78,7 +81,14 @@ const TenantPaymentList = () => {
             <div className="flex justify-end">
               <button
                 type="button"
-                className="mt-3 text-sm font-semibold text-blue-600 border border-blue-600 rounded px-3 py-1 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="mt-3 text-base font-semibold text-blue-600 border border-blue-600 rounded px-3 py-1 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                onClick={() => {
+                  setSelectedPayment({
+                    ...data,
+                    methodName: method?.name,
+                  });
+                  setOpenDetailModal(true);
+                }}
               >
                 Lihat Selengkapnya
               </button>
@@ -86,6 +96,11 @@ const TenantPaymentList = () => {
           </div>
         );
       })}
+      <PaymentDetailModal
+        open={openDetailModal}
+        onClose={() => setOpenDetailModal(false)}
+        payment={selectedPayment}
+      />
     </div>
   );
 };

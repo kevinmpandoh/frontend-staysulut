@@ -35,14 +35,6 @@ const KontrakClient = ({ bookingId }: Props) => {
 
   return (
     <div className="w-full mx-auto">
-      <a
-        className="inline-flex items-center text-gray-800 font-semibold mb-6 hover:underline"
-        href="#"
-      >
-        Kembali
-      </a>
-      <h1 className="text-2xl font-bold mb-6">Kontrak Kost</h1>
-
       <div className="flex space-x-4 mb-6">
         <Image
           alt="Room"

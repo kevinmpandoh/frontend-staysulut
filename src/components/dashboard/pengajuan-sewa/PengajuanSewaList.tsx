@@ -9,6 +9,7 @@ import KonfirmasiModal from "./KonfirmasiModal";
 import { useRoom } from "@/hooks/useRoom";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useChat } from "@/hooks/useChat";
+import { useKost } from "@/hooks/useKost";
 
 const PengajuanSewaList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,6 +19,8 @@ const PengajuanSewaList = () => {
   const searchParams = useSearchParams();
   const status = searchParams.get("status") || "all";
   const itemsPerPage = 5;
+  const [daftarKost, setDaftarKost] = useState<any[]>([]);
+  const [selectedKostId, setSelectedKostId] = useState<string | null>(null);
 
   const { getRoomsByKostType } = useRoom(
     selectedBooking ? selectedBooking.kost.kostTypeId : ""
@@ -25,6 +28,7 @@ const PengajuanSewaList = () => {
   const { booking, isLoading, approveBooking, rejectBooking } = useBookingOwner(
     { status }
   );
+  const { kostOwner } = useKost({});
 
   const { getChatTenant } = useChat();
 
@@ -35,6 +39,12 @@ const PengajuanSewaList = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [booking]);
+  useEffect(() => {
+    console.log(kostOwner);
+    if (kostOwner) {
+      setDaftarKost(kostOwner);
+    }
+  }, [kostOwner]);
 
   const handleFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -69,6 +79,25 @@ const PengajuanSewaList = () => {
     setModalType(null);
   };
 
+  const handleKostSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const kostId = e.target.value;
+
+    if (kostId === "all") {
+      setSelectedKostId(null);
+    } else {
+      setSelectedKostId(kostId);
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (kostId === "all") {
+      params.delete("kostId");
+    } else {
+      params.set("kostId", kostId);
+    }
+
+    router.push(`?${params.toString()}`);
+  };
+
   const handleConfirm = (data: any) => {
     if (!selectedBooking || !modalType) return;
 
@@ -89,15 +118,19 @@ const PengajuanSewaList = () => {
     handleCloseModal();
   };
 
+  const filteredBooking = selectedKostId
+    ? booking.filter((b: any) => b.kost.kostId === selectedKostId)
+    : booking;
+
   if (isLoading) {
     return <h1>Loading..</h1>;
   }
 
-  const totalPages = Math.ceil(booking.length / itemsPerPage);
-  const paginatedBooking = booking.slice(
+  const paginatedBooking = filteredBooking.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+  const totalPages = Math.ceil(booking.length / itemsPerPage);
 
   if (!booking) {
     return (
@@ -132,11 +165,18 @@ const PengajuanSewaList = () => {
         <h1>Cari berdasarkan Kost</h1>
 
         {/* Select Input */}
-        <input
-          type="text"
-          placeholder="Pilih Kost"
+        <select
+          onChange={handleKostSelect}
+          value={selectedKostId || "all"}
           className="w-full sm:w-[300px] rounded-lg border border-gray-200 bg-gray-100 text-gray-700 text-[14px] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white"
-        />
+        >
+          <option value="all">Semua Kost</option>
+          {daftarKost.map((kost) => (
+            <option key={kost.id} value={kost.id}>
+              {kost.namaKost}
+            </option>
+          ))}
+        </select>
       </div>
 
       {booking.length === 0 && (

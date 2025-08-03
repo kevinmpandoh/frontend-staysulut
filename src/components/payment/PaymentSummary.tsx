@@ -1,6 +1,7 @@
 import { Billing } from "@/types/billing.type";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
+import Badge from "../ui/badge";
 
 // components/payment/PaymentSummary.tsx
 export function PaymentSummary({ billing }: { billing: Billing }) {
@@ -22,9 +23,12 @@ export function PaymentSummary({ billing }: { billing: Billing }) {
           height={90}
         />
         <div className="flex flex-col justify-center space-y-2">
-          <span className="text-xs font-semibold text-indigo-400 bg-indigo-100 rounded px-2 py-0.5 mb-1 select-text">
+          {/* <span className="text-xs font-semibold text-indigo-400 bg-indigo-100 rounded px-2 py-0.5 mb-1 select-text">
             Kost Campur
-          </span>
+          </span> */}
+          <div>
+            <Badge>{billing?.jenisKost}</Badge>
+          </div>
           <h3 className="font-bold text-base leading-tight select-text">
             {billing?.namaKost}
           </h3>

@@ -31,6 +31,7 @@ export const useBooking = () => {
     mutationFn: bookingService.createBooking,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["booking"] });
+      router.push("booking/success");
     },
   });
 

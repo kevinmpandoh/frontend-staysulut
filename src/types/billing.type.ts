@@ -5,6 +5,7 @@ export type Billing = {
   dueDate: string;
   invoice: string;
   namaKost: string;
+  jenisKost: string;
   fotoKamar: string;
   alamat: string;
   tanggalMasuk: string;

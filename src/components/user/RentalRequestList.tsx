@@ -22,6 +22,7 @@ const RentalRequestList = () => {
         <RentalRequestCard
           key={item?.id}
           id={item?.id}
+          kostId={item?.kostId}
           date={item?.tanggalDiajukan}
           status={item?.status}
           kostName={item?.namaKost}

@@ -12,7 +12,6 @@ import { useSearchParams } from "next/navigation";
 
 interface BookingFormProps {
   kostId: string; // id kost yang mau di-booking
-  onSuccess: () => void;
 }
 
 interface FormValues {
@@ -29,7 +28,7 @@ const schema = yup.object({
   // catatan: yup.string().nullable(),
 });
 
-const BookingForm = ({ kostId, onSuccess }: BookingFormProps) => {
+const BookingForm = ({ kostId }: BookingFormProps) => {
   const searchParams = useSearchParams();
   const tanggalMasukFromURL = searchParams.get("tanggalMasuk");
 
@@ -53,13 +52,11 @@ const BookingForm = ({ kostId, onSuccess }: BookingFormProps) => {
     const localDate = `${yyyy}-${mm}-${dd}`;
 
     try {
-      await createBooking({
+      createBooking({
         duration: data.durasi,
         kostType: kostId,
         startDate: localDate,
       });
-
-      onSuccess(); // Kalau berhasil booking, trigger success
     } catch (error) {
       console.error(error);
       // Bisa kasih toast error atau alert kalau mau
@@ -91,12 +88,12 @@ const BookingForm = ({ kostId, onSuccess }: BookingFormProps) => {
 
       <div className="flex justify-between items-center mb-3">
         <h2 className="font-semibold text-lg">Informasi Peneywa</h2>
-        <a
+        {/* <a
           href="#"
           className="text-gray-700 text-sm font-semibold hover:underline"
         >
           Ubah Data Diri
-        </a>
+        </a> */}
       </div>
 
       <div className="space-y-4">
@@ -110,7 +107,7 @@ const BookingForm = ({ kostId, onSuccess }: BookingFormProps) => {
         </div>
         <div>
           <label className="block text-sm font-medium">Jenis Kelamin</label>
-          <div className="mt-1">{user?.jenis_kelamin} Laki-Laki </div>
+          <div className="mt-1">{user?.jenis_kelamin || "-"}</div>
         </div>
         <hr className="my-8 border-gray-200" />
       </div>

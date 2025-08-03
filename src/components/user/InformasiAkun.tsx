@@ -167,7 +167,7 @@ export default function InformasiAkun() {
           </button>
         </form>
       </section>
-      <hr className="my-6" />
+      {/* <hr className="my-6" />
       <section className="mb-4">
         <h2 className="font-bold text-xl text-[#0F172A] mb-4">
           Verifikasi Akun
@@ -208,22 +208,7 @@ export default function InformasiAkun() {
             </button>
           </div>
         </div>
-      </section>
-      <hr className="my-6" />
-      <section className="">
-        <h2 className="font-bold text-xl text-[#0F172A] mb-4">Hapus Akun</h2>
-        <div className="flex items-center justify-between ">
-          <p className="text-sm font-semibold text-[#1E293B]">
-            Hapus Akun Permanen
-          </p>
-          <button
-            className="text-red-600 border border-red-600 rounded-md text-xs font-bold px-4 py-1 hover:bg-red-50 transition"
-            type="button"
-          >
-            Hapus
-          </button>
-        </div>
-      </section>
+      </section> */}
     </>
   );
 }

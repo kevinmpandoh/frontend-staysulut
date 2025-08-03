@@ -1,7 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useBooking } from "@/hooks/useBooking";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const BookingHistoryList = () => {
@@ -23,13 +25,15 @@ const BookingHistoryList = () => {
             key={data.id}
             className="flex flex-col sm:flex-row items-center sm:items-start bg-white border border-gray-200 rounded-lg shadow-sm p-4 w-full"
           >
-            <Image
-              src={data.fotoKamar || "/kost.jpg"}
-              width={120}
-              height={90}
-              alt="Room with bed and wooden door, bright yellow wall"
-              className="w-40 h-36 rounded-md object-cover flex-shrink-0"
-            />
+            <Link href={`/kosts/${data.kostTypeId}`}>
+              <Image
+                src={data.fotoKamar || "/kost.jpg"}
+                width={120}
+                height={90}
+                alt="Room with bed and wooden door, bright yellow wall"
+                className="w-40 h-36 rounded-md object-cover flex-shrink-0"
+              />
+            </Link>
             <div className="flex flex-col sm:ml-4 mt-3 sm:mt-0 w-full">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs text-gray-500 font-normal">
@@ -52,9 +56,11 @@ const BookingHistoryList = () => {
                 {data.alamat}
               </div>
               <div className="mt-3 self-end">
-                <button className="text-xs text-blue-600 border border-blue-600 rounded px-3 py-1 font-semibold hover:bg-blue-50 transition">
-                  Sewa Lagi
-                </button>
+                <Button>
+                  <Link href={`/kosts/${data.kostTypeId}/booking`}>
+                    Sewa Lagi
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>
